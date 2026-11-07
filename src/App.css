@@ -1,0 +1,26 @@
+/* 최상위 프레임 */
+.app {
+  position: relative;
+  width: 100%;
+  max-width: var(--app-width);
+  height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border-left: 1px solid var(--color-grey-300);
+  border-right: 1px solid var(--color-grey-300);
+  overflow: hidden;
+}
+
+/* 모달·토스트·바텀시트 - 앱 칸 안에만 보이게*/
+.app-overlay-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-overlay);
+}
+
+.app-overlay-root > * {
+  pointer-events: auto;
+}

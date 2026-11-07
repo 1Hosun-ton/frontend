@@ -1,0 +1,19 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 1.38rem; /* 22px */
+  padding: 0 0.5rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-xsmall);
+  font-weight: var(--weight-medium);
+}
+
+.tag-grey {
+  background: var(--color-grey-100);
+  color: var(--color-text-sub);
+}
+
+.tag-danger {
+  background: var(--color-danger);
+  color: var(--color-white);
+}

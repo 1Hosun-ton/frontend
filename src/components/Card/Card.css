@@ -1,0 +1,19 @@
+.card {
+  border-radius: var(--radius-card);
+}
+
+.card-white {
+  background: var(--color-white);
+}
+
+.card-grey {
+  background: var(--color-grey-100);
+}
+
+.card-md {
+  padding: var(--space-card);
+}
+
+.card-sm {
+  padding: var(--space-gap);
+}

@@ -1,0 +1,25 @@
+.chip {
+  height: 2.13rem; /* 34px */
+  padding: 0 0.88rem;
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-size: var(--font-body);
+  font-weight: var(--weight-regular);
+  cursor: pointer;
+}
+
+.chip-selected-default {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: var(--weight-medium);
+}
+
+.chip-selected-danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: var(--color-white);
+  font-weight: var(--weight-medium);
+}

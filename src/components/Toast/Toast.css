@@ -1,0 +1,15 @@
+.toast {
+  position: absolute;
+  left: var(--space-page);
+  right: var(--space-page);
+  bottom: 5.31rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  border-radius: var(--radius-toast);
+  background: var(--color-toast);
+  color: var(--color-white);
+  font-size: var(--font-body);
+  font-weight: var(--weight-medium);
+}

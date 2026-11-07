@@ -1,0 +1,30 @@
+.text-field-label {
+  display: block;
+  margin-bottom: 0.31rem;
+  font-size: var(--font-body);
+  line-height: 1.31rem; /* 21px */
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+}
+
+.text-field-input {
+  width: 100%;
+  height: 2.75rem; /* 44px */
+  padding: 0 0.88rem;
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--radius-button);
+  background: var(--color-white);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: var(--font-button);
+}
+
+.text-field-input::placeholder {
+  color: var(--color-placeholder);
+}
+
+/* 시안에 포커스 모양이 없어서 파란 테두리로 정했다 */
+.text-field-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

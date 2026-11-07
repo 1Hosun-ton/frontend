@@ -1,0 +1,16 @@
+/* 페이지가 화면 높이를 채워야 아래 띠가 맨 밑에 붙는다. */
+.records-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 하단 탭 바로 위에 붙는 흰 띠. 페이지 내용의 맨 마지막에 둔다. */
+.records-action-bar {
+  /* 아래에 붙고, 내용 영역 좌우·아래 여백까지 흰색으로 채운다 */
+  position: sticky;
+  bottom: 0;
+  margin: auto calc(var(--space-page) * -1) calc(var(--space-page) * -1);
+  padding: 1rem var(--space-page) 0.75rem; /* 위 16px + 버튼 56px + 아래 12px = 84px */
+  background: var(--color-white);
+}

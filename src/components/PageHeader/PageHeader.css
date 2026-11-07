@@ -1,0 +1,19 @@
+.page-header {
+  margin: 0;
+}
+
+.page-header-subtitle {
+  margin: 0 0 0.13rem;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.page-header-title {
+  margin: 0;
+  font-size: var(--font-title);
+  line-height: 1.94rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}

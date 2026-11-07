@@ -1,0 +1,38 @@
+/* TabLayout의 스크롤 되는 내용 영역 */
+.layout-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* 위쪽 16px: PageHeader가 Figma와 같은 위치에 오도록 */
+  padding: 1rem var(--space-page) var(--space-page);
+}
+
+.layout-content-white {
+  background: var(--color-white);
+}
+
+.layout-content-grey {
+  background: var(--color-grey-100);
+}
+
+
+/* AuthLayout: 하단 탭 없는 흰 화면. 위쪽 여백은 페이지마다 달라서 두지 않는다. */
+.auth-layout {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* 아래 21px: 맨 아래 버튼이 시안처럼 바닥에서 떨어진다 */
+  padding: 0 var(--space-page) 1.31rem;
+  background: var(--color-white);
+}
+
+/* 페이지의 맨 바깥 요소가 화면 높이를 채운다 */
+.auth-layout > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

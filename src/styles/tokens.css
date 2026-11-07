@@ -1,0 +1,59 @@
+:root {
+  /* 색 */
+  --color-primary: #3182f6;
+  --color-ink: #191f28;
+  --color-text-sub: #4e5968;
+  --color-grey-100: #f2f4f6; /* 페이지 배경 */
+  --color-grey-200: #e5e8eb; /* 진행바 바탕, 하단 탭 윗선 */
+  --color-grey-300: #d1d6db; /* 테두리 */
+  --color-primary-soft: #e8f3ff; /* 연파랑 버튼 배경 */
+  --color-primary-strong: #1b64da; /* 연파랑 버튼 글자색 */
+  --color-danger: #f04452; /* 예산 초과, 후회 태그 */
+  --color-icon-inactive: #b0b8c1;
+  --color-placeholder: #b0b8c1; /* 입력칸 안내 글자 */
+  --color-text-muted: #6b7684; /* 바텀시트 설명 글자 */
+  --color-toast: #333d4b; /* 토스트 배경 */
+  --color-dim: rgba(0, 0, 0, 0.45); /* 바텀시트 뒤 어두운 막 */
+  --color-white: #fff;
+
+  /* 글자 */
+  --font-sans: 'Pretendard', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --font-caption: 0.69rem; /* 하단 탭 글자 */
+  --font-xsmall: 0.75rem; /* 태그 글자 */
+  --font-small: 0.81rem; /* 보조 글자 */
+  --font-body: 0.88rem;
+  --font-button: 0.94rem;
+  --font-base: 1rem;
+  --font-section: 1.06rem;
+  --font-sheet-title: 1.19rem; /* 바텀시트 제목 */
+  --font-title: 1.38rem; /* 페이지 제목, 통계 숫자 */
+  --font-amount: 1.88rem; /* 큰 금액 */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* 간격 */
+  --space-page: 1.25rem; /* 좌우 여백 */
+  --space-card: 1.25rem;
+  --space-gap: 1rem;
+
+  /* 둥근 모서리 */
+  --radius-card: 1rem;
+  --radius-button: 0.63rem; /* 작은 버튼 */
+  --radius-button-md: 0.88rem; /* 중간 버튼 */
+  --radius-pill: 1.63rem;
+  --radius-sheet: 1.25rem; /* 바텀시트 위쪽 모서리 */
+  --radius-toast: 0.75rem;
+  --radius-bar: 0.31rem;
+
+  /* 레이아웃 */
+  --app-width: 390px;
+  --header-height: 3.5rem;
+  --tab-bar-height: 4rem;
+
+  /* 겹침 순서(z-index) */
+  --z-tab-bar: 10;
+  --z-fab: 20;
+  --z-overlay: 100;
+}
