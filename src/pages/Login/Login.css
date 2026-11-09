@@ -1,0 +1,58 @@
+.login-page {
+  padding-top: 7.5rem;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.login-logo {
+  display: block;
+}
+
+.login-title {
+  margin: 1rem 0 0;
+  font-size: 1.75rem;
+  line-height: 2.31rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.login-slogan {
+  margin: 0.69rem 0 0;
+  font-size: var(--font-base);
+  line-height: 1.5rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.login-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.login-submit {
+  margin-top: 1.5rem;
+}
+
+.login-signup {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0;
+  font-size: var(--font-body);
+  line-height: 1.5rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.login-signup-link {
+  font-weight: var(--weight-bold);
+  color: var(--color-primary-strong);
+  text-decoration: none;
+}
