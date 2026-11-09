@@ -5,12 +5,120 @@
   flex-direction: column;
 }
 
+.records-period {
+  margin-top: 1rem;
+}
+
+/* 월 총 소비 카드 */
+.records-summary {
+  margin-top: 1rem;
+}
+
+.records-summary-label,
+.records-summary-average {
+  margin: 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.records-summary-total {
+  margin: 0.25rem 0;
+  font-size: 1.63rem;
+  line-height: 2.19rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+/* 날짜별 묶음 */
+.records-group {
+  margin-top: 1rem;
+}
+
+.records-group-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-text-sub);
+}
+
+.records-list {
+  margin: 0;
+  padding: 0;
+}
+
+/* 기록 없음 */
+.records-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 7rem; /* 시안처럼 가운데보다 약간 위로 */
+  text-align: center;
+}
+
+.records-empty-illustration {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.records-empty-message {
+  margin: 0 0 1rem;
+  font-size: var(--font-section);
+  line-height: 1.59rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.records-empty-button {
+  width: 10rem;
+  font-size: var(--font-button);
+}
+
 /* 하단 탭 바로 위에 붙는 흰 띠. 페이지 내용의 맨 마지막에 둔다. */
 .records-action-bar {
   /* 아래에 붙고, 내용 영역 좌우·아래 여백까지 흰색으로 채운다 */
   position: sticky;
-  bottom: 0;
+  /* 스크롤 영역의 아래 여백(--space-page) 안쪽에 붙지 않고 탭 바 바로 위에 붙도록 */
+  bottom: calc(var(--space-page) * -1);
   margin: auto calc(var(--space-page) * -1) calc(var(--space-page) * -1);
   padding: 1rem var(--space-page) 0.75rem; /* 위 16px + 버튼 56px + 아래 12px = 84px */
   background: var(--color-white);
+}
+
+/* 삭제 확인 바텀시트 */
+.records-sheet-description {
+  margin: 0;
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.records-sheet-target {
+  margin: 1rem 0 0;
+  padding: 0 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-grey-100);
+  font-size: var(--font-body);
+  line-height: 3.5rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+}
+
+.records-sheet-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.records-sheet-actions .button {
+  flex: 1;
+  padding: 0;
+  font-size: var(--font-section);
 }
