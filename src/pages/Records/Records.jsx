@@ -8,14 +8,11 @@ import PeriodSwitcher from '../../components/PeriodSwitcher/PeriodSwitcher.jsx'
 import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
 import emptyRecord from '../../assets/icons/empty-record.svg'
-import { RECORD_CATEGORIES } from './recordCategories.js'
+import { itemLabel } from './recordCategories.js'
 import { fetchMockRecords, MOCK_TODAY } from './recordsMock.js'
 import './Records.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
-const pad = (n) => String(n).padStart(2, '0')
-const sumAmount = (list) => list.reduce((sum, r) => sum + r.amount, 0)
-const toMonthKey = ({ year, month }) => `${year}-${pad(month)}`
 
 function parseDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number)
@@ -26,7 +23,7 @@ export default function Records() {
   const navigate = useNavigate()
   const showToast = useToast()
   const [view, setView] = useState({ year: MOCK_TODAY.getFullYear(), month: MOCK_TODAY.getMonth() + 1 })
-  const [records, setRecords] = useState(() => fetchMockRecords(toMonthKey(view)))
+  const [data, setData] = useState(() => fetchMockRecords(view.year, view.month))
   const [deleteTarget, setDeleteTarget] = useState(null)
   const isCurrentMonth = view.year === MOCK_TODAY.getFullYear() && view.month === MOCK_TODAY.getMonth() + 1
 
@@ -34,29 +31,28 @@ export default function Records() {
     const next = new Date(view.year, view.month - 1 + delta, 1)
     const nextView = { year: next.getFullYear(), month: next.getMonth() + 1 }
     setView(nextView)
-    setRecords(fetchMockRecords(toMonthKey(nextView)))
+    setData(fetchMockRecords(nextView.year, nextView.month))
   }
 
-  // 날짜별로 묶기
-  const groups = []
-  records.forEach((record) => {
-    const last = groups[groups.length - 1]
-    if (last && last.date === record.date) last.items.push(record)
-    else groups.push({ date: record.date, items: [record] })
-  })
+  const { summary, expenses } = data
 
-  const total = sumAmount(records)
-  const elapsedDays = isCurrentMonth ? MOCK_TODAY.getDate() : new Date(view.year, view.month, 0).getDate()
-  const dailyAverage = Math.round(total / elapsedDays)
-  const weeklyAverage = Math.round((total / elapsedDays) * 7)
+  // 날짜별로 묶기. 날짜 옆 그날 합계는 응답에 없어서 여기서 더한다
+  const groups = []
+  expenses.forEach((expense) => {
+    const last = groups[groups.length - 1]
+    if (last && last.date === expense.spentAt) last.items.push(expense)
+    else groups.push({ date: expense.spentAt, items: [expense] })
+  })
+  const dayTotal = (items) => items.reduce((sum, e) => sum + e.amount, 0)
 
   const confirmDelete = () => {
-    setRecords((prev) => prev.filter((r) => r.id !== deleteTarget.id))
+    // 실제 API에서는 DELETE 후 목록을 다시 불러온다. 지금은 목록에서만 뺀다
+    setData({ ...data, expenses: expenses.filter((e) => e.expenseId !== deleteTarget.expenseId) })
     setDeleteTarget(null)
     showToast('기록을 삭제했어요')
   }
 
-  const target = deleteTarget && { ...parseDate(deleteTarget.date), ...RECORD_CATEGORIES[deleteTarget.category] }
+  const target = deleteTarget && parseDate(deleteTarget.spentAt)
 
   return (
     <div className="records-page">
@@ -83,13 +79,16 @@ export default function Records() {
         </div>
       ) : (
         <>
-          <Card tone="grey" className="records-summary">
-            <p className="records-summary-label">{view.month}월 총 소비</p>
-            <p className="records-summary-total">{total.toLocaleString()}원</p>
-            <p className="records-summary-average">
-              주간 평균 {weeklyAverage.toLocaleString()}원 · 하루 평균 {dailyAverage.toLocaleString()}원
-            </p>
-          </Card>
+          {summary && (
+            <Card tone="grey" className="records-summary">
+              <p className="records-summary-label">{view.month}월 총 소비</p>
+              <p className="records-summary-total">{summary.totalAmount.toLocaleString()}원</p>
+              <p className="records-summary-average">
+                주간 평균 {summary.weeklyAverage.toLocaleString()}원 · 하루 평균{' '}
+                {summary.dailyAverage.toLocaleString()}원
+              </p>
+            </Card>
+          )}
 
           {groups.map((group) => {
             const { month, day, weekday } = parseDate(group.date)
@@ -99,11 +98,11 @@ export default function Records() {
                   <span>
                     {month}월 {day}일 ({weekday})
                   </span>
-                  <span>{sumAmount(group.items).toLocaleString()}원</span>
+                  <span>{dayTotal(group.items).toLocaleString()}원</span>
                 </div>
                 <ul className="records-list">
-                  {group.items.map((record) => (
-                    <RecordItem key={record.id} record={record} onDelete={() => setDeleteTarget(record)} />
+                  {group.items.map((expense) => (
+                    <RecordItem key={expense.expenseId} record={expense} onDelete={() => setDeleteTarget(expense)} />
                   ))}
                 </ul>
               </section>
@@ -127,7 +126,8 @@ export default function Records() {
               잘못 입력했다면 삭제 후 다시 기록해 주세요.
             </p>
             <p className="records-sheet-target">
-              {target.name} · {deleteTarget.amount.toLocaleString()}원 · {target.month}월 {target.day}일
+              {itemLabel(deleteTarget.item)} · {deleteTarget.amount.toLocaleString()}원 · {target.month}월{' '}
+              {target.day}일
             </p>
             <div className="records-sheet-actions">
               <Button variant="light" onClick={() => setDeleteTarget(null)}>
