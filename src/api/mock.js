@@ -22,6 +22,7 @@ const ERRORS = {
   INVALID_CREDENTIALS: '이메일 또는 비밀번호를 다시 확인해 주세요.',
   EMAIL_ALREADY_EXISTS: '이미 가입된 이메일이에요',
   UNAUTHORIZED: '다시 로그인해 주세요',
+  INVALID_BUDGET: '1원 이상 입력해 주세요',
   AMOUNT_REQUIRED: '금액을 입력해 주세요',
   REASON_REGRET_REQUIRED: '이유와 후회 여부를 선택해 주세요',
   FUTURE_DATE_NOT_ALLOWED: '미래 날짜는 선택할 수 없어요',
@@ -123,6 +124,10 @@ function requireUser(db) {
   return user
 }
 
+function publicUser(user) {
+  return { id: user.id, email: user.email, nickname: user.nickname, weeklyBudget: user.weeklyBudget }
+}
+
 // 백엔드 회원가입 응답과 같은 모양: { accessToken, refreshToken, user: { userId, nickname, weeklyBudget } }
 function authResponse(user) {
   return {
@@ -163,6 +168,36 @@ export async function signup({ nickname, email, password }) {
   save(db)
   setSessionUserId(user.id)
   return respond(authResponse(user))
+}
+
+export async function getMe() {
+  const db = load()
+  return respond(publicUser(requireUser(db)))
+}
+
+export async function logout() {
+  setSessionUserId(null)
+  return respond(null)
+}
+
+export async function deleteAccount() {
+  const db = load()
+  const user = requireUser(db)
+  db.users = db.users.filter((u) => u.id !== user.id)
+  db.expenses = db.expenses.filter((e) => e.userId !== user.id)
+  db.missions = db.missions.filter((m) => m.userId !== user.id)
+  save(db)
+  setSessionUserId(null)
+  return respond(null)
+}
+
+export async function updateWeeklyBudget(weeklyBudget) {
+  const db = load()
+  const user = requireUser(db)
+  if (!weeklyBudget || weeklyBudget <= 0) fail('INVALID_BUDGET')
+  user.weeklyBudget = weeklyBudget
+  save(db)
+  return respond(publicUser(user))
 }
 
 export async function getHome() {
