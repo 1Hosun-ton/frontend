@@ -5,6 +5,106 @@
   flex-direction: column;
 }
 
+.home-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.44rem 0 1.5rem;
+}
+
+.home-card-label {
+  margin: 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.home-card-label-lg {
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+}
+
+.home-budget {
+  padding-bottom: 1rem;
+}
+
+.home-budget-label {
+  display: flex;
+  align-items: center;
+  gap: 0.94rem;
+}
+
+.home-budget-amount {
+  margin: 0.19rem 0 0;
+  font-size: var(--font-amount);
+  line-height: 2.5rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.home-budget-bar {
+  margin-top: 1.38rem;
+}
+
+.home-budget-caption {
+  margin: 0.5rem 0 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.home-stats {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.home-stat {
+  flex: 1;
+}
+
+.home-stat-value {
+  margin: 0.25rem 0 0;
+  font-size: var(--font-title);
+  line-height: 1.94rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.home-mission-title {
+  margin: 0.25rem 0 0;
+  font-size: var(--font-section);
+  line-height: 1.63rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.home-mission-pick {
+  margin-top: 1.13rem;
+}
+
+.home-mission-steps {
+  margin-top: 1.25rem;
+}
+
+.home-mission-days {
+  margin: 0.63rem 0 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.home-mission-check {
+  margin-top: 0.75rem;
+}
+
+.home-mission-done:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
 /* 하단 탭 바로 위, 오른쪽에 떠 있는 「+ 기록하기」 버튼. 페이지 내용의 맨 마지막에 둔다. */
 .home-record-button {
   /* 스크롤해도 아래에 붙고, 내용이 짧으면 맨 아래로 내려간다 */
