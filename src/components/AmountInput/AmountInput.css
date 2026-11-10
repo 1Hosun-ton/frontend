@@ -1,0 +1,59 @@
+.amount-input {
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-ink);
+  color: var(--color-ink);
+  font-weight: var(--weight-bold);
+  cursor: text;
+}
+
+.amount-input:focus-within {
+  border-bottom-color: var(--color-primary);
+}
+
+.amount-input-lg {
+  font-size: var(--font-amount);
+  line-height: 2.5rem;
+}
+
+.amount-input-md {
+  font-size: 1.75rem;
+  line-height: 2.31rem;
+  padding-bottom: 0.44rem;
+}
+
+/* 보이지 않는 글자가 칸 너비를 정하고 입력칸은 그 위에 겹친다 */
+.amount-input-box {
+  position: relative;
+  display: inline-block;
+}
+
+.amount-input-sizer {
+  display: block;
+  visibility: hidden;
+  white-space: pre;
+  padding-right: 0.13rem;
+}
+
+.amount-input-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  caret-color: var(--color-primary);
+}
+
+.amount-input-field::placeholder {
+  color: var(--color-placeholder);
+}
+
+.amount-input-unit-empty {
+  color: var(--color-placeholder);
+}

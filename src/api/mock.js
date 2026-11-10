@@ -22,6 +22,9 @@ const ERRORS = {
   INVALID_CREDENTIALS: '이메일 또는 비밀번호를 다시 확인해 주세요.',
   EMAIL_ALREADY_EXISTS: '이미 가입된 이메일이에요',
   UNAUTHORIZED: '다시 로그인해 주세요',
+  AMOUNT_REQUIRED: '금액을 입력해 주세요',
+  REASON_REGRET_REQUIRED: '이유와 후회 여부를 선택해 주세요',
+  FUTURE_DATE_NOT_ALLOWED: '미래 날짜는 선택할 수 없어요',
   ALREADY_CHECKED_TODAY: '오늘은 이미 체크했어요',
   MISSION_NOT_ACTIVE: '진행 중인 미션이 아니에요',
 }
@@ -196,3 +199,24 @@ export async function checkMission(missionId) {
   return respond({ doneDays: mission.doneDays })
 }
 
+export async function createExpense({ amount, item, spentOn, reason, regret, mood, memo }) {
+  const db = load()
+  const user = requireUser(db)
+  if (!amount || amount <= 0) fail('AMOUNT_REQUIRED')
+  if (!reason || regret === null || regret === undefined) fail('REASON_REGRET_REQUIRED')
+  if (spentOn > todayString()) fail('FUTURE_DATE_NOT_ALLOWED')
+  const expense = {
+    id: db.nextId++,
+    userId: user.id,
+    spentOn,
+    item,
+    amount,
+    reason,
+    regret,
+    mood: mood ?? null,
+    memo: memo?.trim() || null,
+  }
+  db.expenses.push(expense)
+  save(db)
+  return respond(expense)
+}
