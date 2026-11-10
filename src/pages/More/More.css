@@ -1,0 +1,109 @@
+.more-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.more-account {
+  margin-top: 1.44rem;
+  padding: 1rem 1.25rem 0.56rem;
+}
+
+.more-account-label {
+  margin: 0;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.more-account-name {
+  margin: 0;
+  min-height: 1.59rem;
+  font-size: var(--font-section);
+  line-height: 1.59rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.more-account-email {
+  margin: 0.16rem 0 0;
+  min-height: 1.31rem;
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.more-menu {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.more-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 3.5rem;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-grey-100);
+  background: none;
+  font-size: var(--font-base);
+  font-weight: var(--weight-regular);
+  color: var(--color-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.more-menu-item:disabled {
+  cursor: default;
+}
+
+.more-menu-item-sub {
+  color: var(--color-text-sub);
+}
+
+.more-menu-value {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--font-body);
+  color: var(--color-text-sub);
+}
+
+.more-menu-value img {
+  display: block;
+}
+
+.more-budget-input {
+  margin-top: 0.88rem;
+}
+
+.more-sheet-help {
+  margin: 0.75rem 0 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.more-sheet-description {
+  margin: 0.13rem 0 0;
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.more-sheet-actions {
+  margin-top: 4.63rem;
+}
+
+.more-sheet-buttons {
+  display: flex;
+  gap: 0.63rem;
+  margin-top: 6.31rem;
+}

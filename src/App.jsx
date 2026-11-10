@@ -11,6 +11,7 @@ import Insights from './pages/Insights/Insights.jsx'
 import Missions from './pages/Missions/Missions.jsx'
 import More from './pages/More/More.jsx'
 import RecordNew from './pages/RecordNew/RecordNew.jsx'
+import AppInfo from './pages/AppInfo/AppInfo.jsx'
 import { ToastProvider } from './components/Toast/Toast.jsx'
 import ComponentPreview from './pages/ComponentPreview.jsx'
 
@@ -42,6 +43,7 @@ function App() {
 
             {/* 하단 탭 없는 화면 */}
             <Route path="/records/new" element={<RecordNew />} />
+            <Route path="/more/info" element={<AppInfo />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <div id="overlay-root" className="app-overlay-root" />
