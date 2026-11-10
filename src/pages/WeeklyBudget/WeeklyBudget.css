@@ -1,0 +1,31 @@
+.weekly-budget-page {
+  padding-top: 5rem;
+}
+
+.weekly-budget-title {
+  margin: 0;
+  font-size: var(--font-title);
+  line-height: 1.94rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.weekly-budget-label {
+  margin: 2.13rem 0 0.25rem;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.weekly-budget-help {
+  margin: 0.75rem 0 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.weekly-budget-submit {
+  margin-top: auto;
+}
