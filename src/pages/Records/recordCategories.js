@@ -12,3 +12,16 @@ export const RECORD_CATEGORIES = {
   food: { name: '식비', icon: food },
   transport: { name: '교통비', icon: transport },
 }
+
+// 소비 이유 코드 → 화면에 쓰는 이름. 백엔드 enum과 맞춰야 한다
+export const RECORD_REASONS = {
+  STRESS: '스트레스 해소',
+  NEED: '필요해서',
+  DISCOUNT: '할인',
+  HABIT: '습관',
+  IMPULSE: '충동·보상',
+}
+
+// 모르는 코드가 와도 화면이 비지 않도록 코드를 그대로 보여 준다
+export const reasonLabel = (code) => RECORD_REASONS[code] ?? code
+export const itemLabel = (code) => RECORD_CATEGORIES[String(code).toLowerCase()]?.name ?? code
