@@ -46,8 +46,8 @@ export default function More() {
     if (!budgetDraft) return showToast('1원 이상 입력해 주세요')
     setBusy(true)
     try {
-      const updated = await updateWeeklyBudget(budgetDraft)
-      setMe(updated)
+      const { weeklyBudget } = await updateWeeklyBudget({ weeklyBudget: budgetDraft })
+      setMe((prev) => ({ ...prev, weeklyBudget }))
       closeSheet()
     } catch (error) {
       showToast(error.message)

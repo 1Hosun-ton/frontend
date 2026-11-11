@@ -25,7 +25,7 @@ export default function RecordNew() {
   const [amount, setAmount] = useState(null)
   const [amountFocused, setAmountFocused] = useState(false)
   const [item, setItem] = useState('FOOD')
-  const [spentOn, setSpentOn] = useState(todayString())
+  const [spentAt, setSpentAt] = useState(todayString())
   const [reason, setReason] = useState(null)
   const [regret, setRegret] = useState(null)
   const [mood, setMood] = useState(null)
@@ -54,7 +54,7 @@ export default function RecordNew() {
 
   const handleDateChange = (e) => {
     const value = e.target.value
-    if (value && value <= todayString()) setSpentOn(value)
+    if (value && value <= todayString()) setSpentAt(value)
   }
 
   const handleSubmit = async (e) => {
@@ -65,7 +65,7 @@ export default function RecordNew() {
 
     setSubmitting(true)
     try {
-      await createExpense({ amount, item, spentOn, reason, regret, mood, memo })
+      await createExpense({ amount, item, spentAt, reason, regret, mood, memo })
       // 홈 화면 플로팅 버튼 위 위치
       showToast('오늘의 기록 완료!', { bottom: '9.75rem' })
       navigate('/', { replace: true })
@@ -126,7 +126,7 @@ export default function RecordNew() {
         <h2 className="record-new-label">날짜</h2>
         <div className="record-new-date">
           <button type="button" className="record-new-date-button" onClick={openDatePicker}>
-            {dateFieldLabel(spentOn)}
+            {dateFieldLabel(spentAt)}
             <img src={chevronRight} alt="" />
           </button>
           <input
@@ -134,7 +134,7 @@ export default function RecordNew() {
             className="record-new-date-input"
             type="date"
             max={todayString()}
-            value={spentOn}
+            value={spentAt}
             onChange={handleDateChange}
             tabIndex={-1}
             aria-hidden="true"

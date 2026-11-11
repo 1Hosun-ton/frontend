@@ -18,10 +18,9 @@ export const EXPENSE_REASONS = [
   { value: 'HABIT', label: '습관' },
 ]
 
-// 기분 저장 값은 백엔드와 아직 정하지 않았다
 export const EXPENSE_MOODS = [
   { value: 'GOOD', label: '좋음' },
   { value: 'NORMAL', label: '보통' },
   { value: 'TIRED', label: '지침' },
-  { value: 'DOWN', label: '우울' },
+  { value: 'DEPRESSED', label: '우울' },
 ]
