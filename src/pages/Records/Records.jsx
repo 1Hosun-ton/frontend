@@ -37,8 +37,10 @@ export default function Records() {
   const { summary, expenses } = data
 
   // 날짜별로 묶기. 날짜 옆 그날 합계는 응답에 없어서 여기서 더한다
+  // 같은 날이 떨어져 오면 묶음이 쪼개져서, 묶기 전에 최신순으로 한 번 정렬한다
   const groups = []
-  expenses.forEach((expense) => {
+  const sorted = [...expenses].sort((a, b) => (a.spentAt < b.spentAt ? 1 : a.spentAt > b.spentAt ? -1 : 0))
+  sorted.forEach((expense) => {
     const last = groups[groups.length - 1]
     if (last && last.date === expense.spentAt) last.items.push(expense)
     else groups.push({ date: expense.spentAt, items: [expense] })

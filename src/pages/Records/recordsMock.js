@@ -1,6 +1,6 @@
 /*
  S5 화면용 임시 데이터. 백엔드 응답 모양을 그대로 따른다.
- GET /expenses?from=YYYY-MM-DD&to=YYYY-MM-DD 자리이고,
+ GET /expenses?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD 자리이고,
  API가 생기면 fetchMockRecords를 실제 호출로 바꾸기만 하면 된다.
 
  MOCK_TODAY는 시안(11월 18일 기준)에 맞춘 고정 날짜다. API 연결 후에는 new Date()를 쓴다.
@@ -30,16 +30,16 @@ const EXPENSES = [
 */
 export function fetchMockRecords(year, month) {
   const lastDay = new Date(year, month, 0).getDate()
-  const from = `${year}-${pad(month)}-01`
-  const to = `${year}-${pad(month)}-${pad(lastDay)}`
-  const expenses = EXPENSES.filter((e) => e.spentAt >= from && e.spentAt <= to)
+  const startDate = `${year}-${pad(month)}-01`
+  const endDate = `${year}-${pad(month)}-${pad(lastDay)}`
+  const expenses = EXPENSES.filter((e) => e.spentAt >= startDate && e.spentAt <= endDate)
 
   const isCurrentMonth = year === MOCK_TODAY.getFullYear() && month === MOCK_TODAY.getMonth() + 1
   const elapsedDays = isCurrentMonth ? MOCK_TODAY.getDate() : lastDay
   const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0)
 
   return {
-    period: { from, to },
+    period: { type: 'MONTH', startDate, endDate },
     summary: expenses.length
       ? {
           totalAmount,

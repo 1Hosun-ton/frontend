@@ -34,7 +34,7 @@ export const RECORD_MOODS = {
   GOOD: '좋음',
   NORMAL: '보통',
   TIRED: '지침',
-  DOWN: '우울',
+  DEPRESSED: '우울',
 }
 
 // 모르는 코드가 와도 화면이 비지 않도록 코드를 그대로 보여 준다
