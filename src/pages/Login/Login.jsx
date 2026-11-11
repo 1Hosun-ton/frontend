@@ -7,7 +7,7 @@ import { login } from '../../api/mock.js'
 import logo from '../../assets/logo.svg'
 import './Login.css'
 
-const LOGIN_FAILED = '이메일 또는 비밀번호를 다시 확인해 주세요.'
+const LOGIN_FAILED = '이메일 또는 비밀번호를 다시 확인해 주세요'
 const TOAST_BOTTOM = '2.31rem'
 
 // S0 로그인 화면

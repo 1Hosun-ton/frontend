@@ -24,11 +24,13 @@ export default function Home() {
       .then((data) => {
         if (ignore) return
         // 주간 예산이 없으면 예산 설정부터
-        if (data.weeklyBudget === null) return navigate('/budget', { replace: true })
+        if (data.budget?.weeklyBudget == null) return navigate('/budget', { replace: true })
         setHome(data)
       })
       .catch((error) => {
-        if (!ignore && error.code === 'UNAUTHORIZED') navigate('/login', { replace: true })
+        if (ignore) return
+        if (error.code === 'UNAUTHORIZED') navigate('/login', { replace: true })
+        else if (error.code === 'BUDGET_NOT_SET') navigate('/budget', { replace: true })
       })
     return () => {
       ignore = true
@@ -39,8 +41,8 @@ export default function Home() {
     if (checking || !home.mission) return
     setChecking(true)
     try {
-      const { doneDays } = await checkMission(home.mission.id)
-      setHome((prev) => ({ ...prev, mission: { ...prev.mission, doneDays, checkedToday: true } }))
+      const { doneDays, checkedToday } = await checkMission(home.mission.missionId)
+      setHome((prev) => ({ ...prev, mission: { ...prev.mission, doneDays, checkedToday } }))
     } catch (error) {
       showToast(error.message)
     } finally {
@@ -51,22 +53,22 @@ export default function Home() {
   return (
     <div className="home-page">
       <PageHeader
-        subtitle={weekLabel()}
+        subtitle={home?.week.label ?? weekLabel()}
         title={home ? `${home.nickname}님, 이번 주 소비를 돌아봐요` : '이번 주 소비를 돌아봐요'}
       />
 
       {home && (
         <div className="home-cards">
-          <BudgetCard budget={home.weeklyBudget} spent={home.spentAmount} />
+          <BudgetCard budget={home.budget} />
 
           <div className="home-stats">
             <Card size="sm" className="home-stat">
               <p className="home-card-label">이번 주 기록</p>
-              <p className="home-stat-value">{formatNumber(home.recordCount)}건</p>
+              <p className="home-stat-value">{formatNumber(home.summary.expenseCount)}건</p>
             </Card>
             <Card size="sm" className="home-stat">
               <p className="home-card-label">후회한 소비</p>
-              <p className="home-stat-value">{formatNumber(home.regretCount)}건</p>
+              <p className="home-stat-value">{formatNumber(home.summary.regretCount)}건</p>
             </Card>
           </div>
 
@@ -86,20 +88,24 @@ export default function Home() {
   )
 }
 
-function BudgetCard({ budget, spent }) {
-  const over = spent > budget
-  const remaining = Math.max(0, budget - spent)
+function BudgetCard({ budget }) {
+  const { weeklyBudget, spentAmount, remainingBudget, overBudget } = budget
 
   return (
     <Card className="home-budget">
       <div className="home-budget-label">
         <p className="home-card-label home-card-label-lg">남은 예산</p>
-        {over && <Tag tone="danger">예산 초과</Tag>}
+        {overBudget && <Tag tone="danger">예산 초과</Tag>}
       </div>
-      <p className="home-budget-amount">{formatWon(remaining)}</p>
-      <ProgressBar value={spent} max={budget} tone={over ? 'danger' : 'primary'} className="home-budget-bar" />
+      <p className="home-budget-amount">{formatWon(remainingBudget)}</p>
+      <ProgressBar
+        value={spentAmount}
+        max={weeklyBudget}
+        tone={overBudget ? 'danger' : 'primary'}
+        className="home-budget-bar"
+      />
       <p className="home-budget-caption">
-        {formatWon(spent)} 썼어요 · 총 예산 {formatWon(budget)}
+        {formatWon(spentAmount)} 썼어요 · 총 예산 {formatWon(weeklyBudget)}
       </p>
     </Card>
   )

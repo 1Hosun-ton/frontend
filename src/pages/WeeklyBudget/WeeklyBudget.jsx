@@ -20,7 +20,7 @@ export default function WeeklyBudget() {
 
     setSubmitting(true)
     try {
-      await updateWeeklyBudget(budget)
+      await updateWeeklyBudget({ weeklyBudget: budget })
       navigate('/', { replace: true })
     } catch (error) {
       if (error.code === 'UNAUTHORIZED') return navigate('/login', { replace: true })
