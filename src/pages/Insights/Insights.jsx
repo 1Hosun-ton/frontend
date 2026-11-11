@@ -43,7 +43,7 @@ function toTrendChart(trend, period) {
   const previous = trend.filter((point) => point.date < period.startDate)
   const current = trend.filter((point) => point.date >= period.startDate)
   const longer = previous.length >= current.length ? previous : current
-  const isWeekly = period.type === 'WEEKLY'
+  const isWeekly = period.type === 'WEEK'
   return {
     labels: longer.map((point) => toLabel(point.date, isWeekly)),
     current: current.map((point) => point.amount),

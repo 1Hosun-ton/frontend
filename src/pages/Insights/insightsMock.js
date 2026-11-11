@@ -66,11 +66,11 @@ const WEEK_TREND = [
 ]
 
 const MONTH_READY = {
-  key: '2026-11-MONTHLY',
+  key: '2026-11-MONTH',
   status: STATUS.ready,
   cumulativeExpenseCount: 10,
   requiredExpenseCount: 5,
-  period: { type: 'MONTHLY', startDate: '2026-11-01', endDate: '2026-11-30' },
+  period: { type: 'MONTH', startDate: '2026-11-01', endDate: '2026-11-30' },
   totalAmount: 248500,
   regretCount: 4,
   keyInsight: {
@@ -86,11 +86,11 @@ const MONTH_READY = {
 }
 
 const WEEK_READY = {
-  key: '2026-11-3-WEEKLY',
+  key: '2026-11-3-WEEK',
   status: STATUS.ready,
   cumulativeExpenseCount: 10,
   requiredExpenseCount: 5,
-  period: { type: 'WEEKLY', startDate: '2026-11-16', endDate: '2026-11-22' },
+  period: { type: 'WEEK', startDate: '2026-11-16', endDate: '2026-11-22' },
   totalAmount: 54000,
   regretCount: 2,
   keyInsight: {
@@ -135,18 +135,18 @@ const empty = (status, type, cumulativeExpenseCount) => ({
   analysisSource: 'NONE',
 })
 
-// GET /insights?type=MONTHLY|WEEKLY&date=... 대신 쓰는 임시 함수
+// GET /insights?type=MONTH|WEEK&date=... 대신 쓰는 임시 함수
 export function fetchMockInsights(period, { year, month, week }) {
   const isNovember = year === 2026 && month === 11
   if (period === 'month') {
     if (isNovember) return MONTH_READY
     if (year === 2026 && month === 10) return noPattern(MONTH_READY)
-    if (year === 2026 && month === 9) return empty(STATUS.noExpenses, 'MONTHLY', 10)
-    return empty(STATUS.insufficient, 'MONTHLY', 3)
+    if (year === 2026 && month === 9) return empty(STATUS.noExpenses, 'MONTH', 10)
+    return empty(STATUS.insufficient, 'MONTH', 3)
   }
   if (isNovember) return week === 3 ? WEEK_READY : noPattern(WEEK_READY)
-  if (year === 2026 && month === 10) return empty(STATUS.noExpenses, 'WEEKLY', 10)
-  return empty(STATUS.insufficient, 'WEEKLY', 3)
+  if (year === 2026 && month === 10) return empty(STATUS.noExpenses, 'WEEK', 10)
+  return empty(STATUS.insufficient, 'WEEK', 3)
 }
 
 /*
@@ -159,5 +159,5 @@ export function fetchMockEvidenceRecords({ type }) {
     { id: 2, date: '2026-11-11', item: 'DELIVERY', memo: '', reasons: ['STRESS'], regret: false, amount: 17000 },
     { id: 3, date: '2026-11-04', item: 'DELIVERY', memo: '시험 끝나고', reasons: ['STRESS'], regret: true, amount: 17000 },
   ]
-  return type === 'WEEKLY' ? records.slice(0, 2) : records
+  return type === 'WEEK' ? records.slice(0, 2) : records
 }
