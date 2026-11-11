@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './BottomSheet.css'
 
@@ -9,6 +9,18 @@ import './BottomSheet.css'
  children: title 아래 나머지 내용
 */
 export default function BottomSheet({ open, onClose, title, children }) {
+  /*
+   바텀시트는 App이 그린 overlay-root 안에 들어간다.
+   그런데 처음 그릴 때는 overlay-root가 아직 화면에 없어서,
+   화면에 올라온 뒤에 한 번 더 찾는다. (처음부터 열려 있는 바텀시트도 보이게)
+  */
+  const [root, setRoot] = useState(null)
+
+  useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
+    setRoot(document.getElementById('overlay-root'))
+  }, [])
+
   useEffect(() => {
     if (!open) return
     const onKeyDown = (e) => e.key === 'Escape' && onClose()
@@ -16,8 +28,7 @@ export default function BottomSheet({ open, onClose, title, children }) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, onClose])
 
-  const root = open ? document.getElementById('overlay-root') : null
-  if (!root) return null
+  if (!open || !root) return null
 
   return createPortal(
     <div className="bottom-sheet-dim" onClick={onClose}>
