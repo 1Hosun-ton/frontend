@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import AmountInput from '../../components/AmountInput/AmountInput.jsx'
 import Button from '../../components/Button/Button.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { updateWeeklyBudget } from '../../api/mock.js'
+import { updateWeeklyBudget } from '../../api/index.js'
 import './WeeklyBudget.css'
 
 // S2 주간 예산 화면
