@@ -15,6 +15,12 @@
   --color-toast: #333d4b; /* 토스트 배경 */
   --color-dim: rgba(0, 0, 0, 0.45); /* 바텀시트 뒤 어두운 막 */
   --color-white: #fff;
+  /* 인사이트 도넛·범례 색 (순서대로) */
+  --color-chart-1: #3182f6;
+  --color-chart-2: #ffc342;
+  --color-chart-3: #03b26c;
+  --color-chart-4: #a234c7;
+  --color-chart-5: #18a5a5;
 
   /* 글자 */
   --font-sans: 'Pretendard', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;

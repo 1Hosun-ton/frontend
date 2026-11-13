@@ -7,8 +7,8 @@ import PageHeader from '../../components/PageHeader/PageHeader.jsx'
 import PeriodSwitcher from '../../components/PeriodSwitcher/PeriodSwitcher.jsx'
 import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import emptyRecord from '../../assets/icons/empty-record.svg'
-import { itemLabel } from './recordCategories.js'
+import coachCharacter from '../../assets/icons/coach-character.png'
+import { RECORD_CATEGORIES } from './recordCategories.js'
 import { fetchMockRecords, MOCK_TODAY } from './recordsMock.js'
 import './Records.css'
 
@@ -70,7 +70,7 @@ export default function Records() {
 
       {groups.length === 0 ? (
         <div className="records-empty">
-          <img className="records-empty-illustration" src={emptyRecord} alt="" />
+          <img className="records-empty-illustration" src={coachCharacter} alt="" />
           <p className="records-empty-message">
             이 달에는 기록이 없어요.
             <br />첫 소비를 기록해 볼까요?
