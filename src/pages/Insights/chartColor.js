@@ -1,5 +1,5 @@
 const COLOR_COUNT = 5
 
 // 도넛 조각과 범례 점이 같은 색을 쓰도록 한 곳에서 정한다.
-// 이유가 5개를 넘으면 색을 처음부터 다시 쓴다.
-export const chartColor = (i) => `var(--color-chart-${(i % COLOR_COUNT) + 1})`
+// 큰 조각부터 파랑·노랑·초록·청록·보라를 쓰고, 그보다 작은 조각은 모두 회색이다.
+export const chartColor = (i) => (i < COLOR_COUNT ? `var(--color-chart-${i + 1})` : 'var(--color-chart-rest)')

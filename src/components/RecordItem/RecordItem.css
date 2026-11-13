@@ -6,7 +6,6 @@
   list-style: none;
 }
 
-/* 40px 회색 동그라미. 항목 이름 글자 윗선보다 4px 아래에서 시작 */
 .record-item-icon {
   flex: none;
   display: flex;
@@ -17,11 +16,9 @@
   margin-top: 0.25rem;
   border-radius: 1.25rem;
   background: var(--color-grey-100);
-}
-
-/* 그림은 원래 크기 그대로 원 가운데에 둔다 */
-.record-item-icon img {
-  display: block;
+  font-family: var(--font-emoji);
+  font-size: 1.38rem;
+  line-height: 1;
 }
 
 .record-item-body {

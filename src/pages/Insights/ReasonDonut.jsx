@@ -8,13 +8,22 @@ const GAP = 1.5
 
 export default function ReasonDonut({ items }) {
   return (
-    <svg className="reason-donut" viewBox={`0 0 ${SIZE} ${SIZE}`} width={SIZE} height={SIZE} aria-hidden="true">
+    /* 조각이 자라는 움직임에서 쓰도록 둘레 길이를 CSS에 넘긴다 */
+    <svg
+      className="reason-donut"
+      style={{ '--donut-circumference': String(CIRCUMFERENCE) }}
+      viewBox={`0 0 ${SIZE} ${SIZE}`}
+      width={SIZE}
+      height={SIZE}
+      aria-hidden="true"
+    >
       {items.map(({ name, percent }, i) => {
         const length = (percent / 100) * CIRCUMFERENCE
         const offset = items.slice(0, i).reduce((sum, item) => sum + (item.percent / 100) * CIRCUMFERENCE, 0)
         return (
           <circle
             key={name}
+            className="reason-donut-arc"
             cx={SIZE / 2}
             cy={SIZE / 2}
             r={RADIUS}

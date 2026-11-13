@@ -30,4 +30,9 @@
   width: 1.5rem;
   height: 1.5rem;
   display: block;
+  color: var(--color-icon-inactive);
+}
+
+.tab-bar-item.active .tab-bar-icon {
+  color: var(--color-primary);
 }

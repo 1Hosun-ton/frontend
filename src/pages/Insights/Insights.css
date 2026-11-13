@@ -184,9 +184,18 @@
   overflow: visible;
 }
 
+/* 처음 그려질 때만 왼쪽에서 오른쪽으로 선이 이어진다 */
 .trend-line {
   fill: none;
   stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: trend-line-draw var(--motion-chart) var(--ease-out);
+}
+
+@keyframes trend-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
 }
 
 .trend-line-previous {
@@ -201,6 +210,13 @@
 
 .trend-dot {
   fill: var(--color-primary);
+  animation: trend-dot-in var(--motion-chart) var(--ease-out);
+}
+
+@keyframes trend-dot-in {
+  from {
+    opacity: 0;
+  }
 }
 
 .trend-labels {
@@ -235,6 +251,17 @@
 
 .reason-donut {
   flex: none;
+}
+
+/* 처음 그려질 때만 조각이 각자 시작점에서 자란다 */
+.reason-donut-arc {
+  animation: reason-donut-draw var(--motion-chart) var(--ease-out);
+}
+
+@keyframes reason-donut-draw {
+  from {
+    stroke-dasharray: 0 var(--donut-circumference);
+  }
 }
 
 .insights-legend {

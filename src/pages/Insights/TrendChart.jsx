@@ -39,8 +39,8 @@ export default function TrendChart({ labels, current, previous, currentLabel, pr
       </div>
 
       <svg className="trend-svg" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" height={HEIGHT} aria-hidden="true">
-        <path className="trend-line trend-line-previous" d={toPath(toPoints(previous, max, count))} />
-        <path className="trend-line trend-line-current" d={toPath(currentPoints)} />
+        <path className="trend-line trend-line-previous" pathLength="1" d={toPath(toPoints(previous, max, count))} />
+        <path className="trend-line trend-line-current" pathLength="1" d={toPath(currentPoints)} />
         {lastPoint && <circle className="trend-dot" cx={lastPoint[0]} cy={lastPoint[1]} r="4" />}
       </svg>
 

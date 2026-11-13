@@ -23,3 +23,14 @@ button {
   font: inherit;
   color: inherit;
 }
+
+/* 휴대폰에서 '움직임 줄이기'를 켜 두면 모든 움직임을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

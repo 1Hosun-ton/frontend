@@ -58,8 +58,8 @@ function toEvidenceRecord(record) {
   const { month, day } = parseDate(record.date)
   return {
     ...record,
-    category: String(record.item).toLowerCase(),
-    reasons: record.reasons.map(reasonLabel),
+    // 근거 기록은 이유가 배열로 오지만 한 줄에는 대표 이유 하나만 보여 준다
+    reason: record.reasons[0],
     memo: `${month}월 ${day}일${record.memo ? ` · ${record.memo}` : ''}`,
   }
 }

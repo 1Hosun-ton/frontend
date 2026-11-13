@@ -8,7 +8,6 @@ import PeriodSwitcher from '../../components/PeriodSwitcher/PeriodSwitcher.jsx'
 import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
 import coachCharacter from '../../assets/icons/coach-character.png'
-import { RECORD_CATEGORIES } from './recordCategories.js'
 import { fetchMockRecords, MOCK_TODAY } from './recordsMock.js'
 import './Records.css'
 
