@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button.jsx'
 import TextField from '../../components/TextField/TextField.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { login } from '../../api/mock.js'
+import { login } from '../../api/index.js'
 import logo from '../../assets/logo.svg'
 import './Login.css'
 
