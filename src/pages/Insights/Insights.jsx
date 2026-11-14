@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomSheet from '../../components/BottomSheet/BottomSheet.jsx'
 import Button from '../../components/Button/Button.jsx'
@@ -10,9 +10,9 @@ import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import chevronRightSmall from '../../assets/icons/chevron-right-small.svg'
 import coachCharacter from '../../assets/icons/coach-character.png'
 import spinner from '../../assets/icons/spinner.svg'
-import { MOCK_TODAY } from '../Records/recordsMock.js'
 import { itemLabel, reasonLabel } from '../Records/recordCategories.js'
-import { fetchMockEvidenceRecords, fetchMockInsights, STATUS } from './insightsMock.js'
+import { getExpenses, getInsights, INSIGHT_STATUS as STATUS } from '../../api/dolabom.js'
+import { useApiData } from '../../api/useApiData.js'
 import ReasonDonut from './ReasonDonut.jsx'
 import { chartColor } from './chartColor.js'
 import TrendChart from './TrendChart.jsx'
@@ -23,7 +23,16 @@ const PERIODS = [
   { key: 'month', label: '월간' },
 ]
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
-const LOADING_DELAY = 800 // 분석 중 화면을 잠깐 보여 주는 시간(임시)
+const TODAY = new Date()
+const pad = (n) => String(n).padStart(2, '0')
+
+/*
+ 서버에는 기간 시작 날짜로 물어본다.
+ 월간은 그 달 1일, 주간은 이 화면이 쓰는 '몇째 주' 셈법대로 (주차-1)*7+1 일이다.
+ 돌려받은 period.startDate/endDate가 실제 기준이므로 그래프와 목록은 그 값을 쓴다.
+*/
+const toPeriodStart = (period, { year, month, week }) =>
+  period === 'week' ? `${year}-${pad(month)}-${pad((week - 1) * 7 + 1)}` : `${year}-${pad(month)}-01`
 
 const weeksInMonth = (year, month) => Math.ceil(new Date(year, month, 0).getDate() / 7)
 
@@ -53,15 +62,10 @@ function toTrendChart(trend, period) {
   }
 }
 
-// 백엔드 코드를 RecordItem이 쓰는 모양으로 바꾸고, 메모를 "11월 18일 · 메모"로 만든다
-function toEvidenceRecord(record) {
-  const { month, day } = parseDate(record.date)
-  return {
-    ...record,
-    // 근거 기록은 이유가 배열로 오지만 한 줄에는 대표 이유 하나만 보여 준다
-    reason: record.reasons[0],
-    memo: `${month}월 ${day}일${record.memo ? ` · ${record.memo}` : ''}`,
-  }
+// 소비 기록 응답을 그대로 쓰면서 메모만 "11월 18일 · 메모"로 바꾼다
+function toEvidenceRecord(expense) {
+  const { month, day } = parseDate(expense.spentAt)
+  return { ...expense, memo: `${month}월 ${day}일${expense.memo ? ` · ${expense.memo}` : ''}` }
 }
 
 // S6 인사이트 화면. 월간/주간 · 분석 결과 · 패턴 없음 · 기록 부족 · 분석 중 · 근거 기록 시트
@@ -69,31 +73,24 @@ export default function Insights() {
   const navigate = useNavigate()
   const [period, setPeriod] = useState('month')
   const [view, setView] = useState({
-    year: MOCK_TODAY.getFullYear(),
-    month: MOCK_TODAY.getMonth() + 1,
-    week: Math.ceil(MOCK_TODAY.getDate() / 7),
+    year: TODAY.getFullYear(),
+    month: TODAY.getMonth() + 1,
+    week: Math.ceil(TODAY.getDate() / 7),
   })
   const [evidenceOpen, setEvidenceOpen] = useState(false)
 
   const isWeek = period === 'week'
   const isCurrent =
-    view.year === MOCK_TODAY.getFullYear() &&
-    view.month === MOCK_TODAY.getMonth() + 1 &&
-    (!isWeek || view.week === Math.ceil(MOCK_TODAY.getDate() / 7))
+    view.year === TODAY.getFullYear() &&
+    view.month === TODAY.getMonth() + 1 &&
+    (!isWeek || view.week === Math.ceil(TODAY.getDate() / 7))
 
-  // 기간이 바뀌면 분석 중 화면을 보이고, 잠시 뒤 결과를 채운다 (API 연결 전 임시 동작)
-  // 받아 둔 결과가 어느 기간 것인지 적어 두는 꼬리표
-  const requestKey = `${period}-${view.year}-${view.month}-${isWeek ? view.week : 0}`
-  const [loaded, setLoaded] = useState({ key: null, data: null })
-  useEffect(() => {
-    const timer = setTimeout(
-      () => setLoaded({ key: requestKey, data: fetchMockInsights(period, view) }),
-      LOADING_DELAY,
-    )
-    return () => clearTimeout(timer)
-  }, [requestKey, period, view])
-  // 아직 지난 기간 결과가 들어 있으면 분석 중 화면을 보여 준다
-  const data = loaded.key === requestKey ? loaded.data : null
+  // 기간이 바뀌면 다시 조회한다. 응답이 오기 전까지는 분석 중 화면을 보여 준다
+  const load = useCallback(
+    () => getInsights({ periodType: isWeek ? 'WEEK' : 'MONTH', periodStart: toPeriodStart(period, view) }),
+    [isWeek, period, view],
+  )
+  const { data, error, reload } = useApiData(load)
 
   const moveMonth = (delta) => {
     const next = new Date(view.year, view.month - 1 + delta, 1)
@@ -120,7 +117,27 @@ export default function Insights() {
   const trend = data?.trend?.length ? toTrendChart(data.trend, data.period) : null
   // 시안처럼 비중이 큰 순서로 보여 준다 (응답 순서는 섞여 올 수 있다)
   const reasons = data ? [...data.reasonBreakdown].sort((a, b) => b.ratio - a.ratio) : []
-  const evidenceRecords = evidenceOpen && keyInsight ? fetchMockEvidenceRecords(data.period) : []
+  /*
+   근거 기록만 주는 엔드포인트가 없어서, 소비 기록을 이유와 기간으로 걸러서 쓴다.
+   시트를 열 때만 불러온다.
+  */
+  const [evidence, setEvidence] = useState({ records: [], loading: false, error: null })
+  useEffect(() => {
+    if (!evidenceOpen || !keyInsight) return
+    let alive = true
+    // oxlint-disable-next-line react/set-state-in-effect
+    setEvidence({ records: [], loading: true, error: null })
+    getExpenses({
+      reason: keyInsight.evidence.reason,
+      from: data.period.startDate,
+      to: data.period.endDate,
+    })
+      .then((res) => alive && setEvidence({ records: res.expenses ?? [], loading: false, error: null }))
+      .catch((err) => alive && setEvidence({ records: [], loading: false, error: err }))
+    return () => {
+      alive = false
+    }
+  }, [evidenceOpen, keyInsight, data?.period.startDate, data?.period.endDate])
 
   return (
     <div className="insights-page">
@@ -150,7 +167,16 @@ export default function Insights() {
         />
       </div>
 
-      {!data && (
+      {error && (
+        <div className="insights-empty">
+          <p className="insights-empty-message">{error.message}</p>
+          <Button variant="light" size="medium" className="insights-empty-button" onClick={reload}>
+            다시 시도
+          </Button>
+        </div>
+      )}
+
+      {!data && !error && (
         <>
           <Card className="insights-card" aria-busy="true">
             <div className="insights-skeleton insights-skeleton-label" />
@@ -276,9 +302,11 @@ export default function Insights() {
               <p className="insights-sheet-subtitle">
                 {reasonLabel(keyInsight.evidence.reason)} · {itemLabel(keyInsight.evidence.item)} · {view.month}월
               </p>
+              {evidence.loading && <p className="insights-note">기록을 불러오고 있어요</p>}
+              {evidence.error && <p className="insights-note">{evidence.error.message}</p>}
               <ul className="insights-evidence-list">
-                {evidenceRecords.map((record) => (
-                  <RecordItem key={record.id} record={toEvidenceRecord(record)} />
+                {evidence.records.map((record) => (
+                  <RecordItem key={record.expenseId} record={toEvidenceRecord(record)} />
                 ))}
               </ul>
               <Button variant="light" fullWidth className="insights-sheet-close" onClick={() => setEvidenceOpen(false)}>

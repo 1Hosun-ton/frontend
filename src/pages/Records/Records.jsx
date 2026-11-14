@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomSheet from '../../components/BottomSheet/BottomSheet.jsx'
 import Button from '../../components/Button/Button.jsx'
@@ -8,32 +8,55 @@ import PeriodSwitcher from '../../components/PeriodSwitcher/PeriodSwitcher.jsx'
 import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
 import coachCharacter from '../../assets/icons/coach-character.png'
-import { fetchMockRecords, MOCK_TODAY } from './recordsMock.js'
+import { deleteExpense, getExpenses } from '../../api/dolabom.js'
+import { useApiData } from '../../api/useApiData.js'
+import { itemLabel } from './recordCategories.js'
 import './Records.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const pad = (n) => String(n).padStart(2, '0')
+const TODAY = new Date()
 
 function parseDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number)
   return { month: m, day: d, weekday: WEEKDAYS[new Date(y, m - 1, d).getDay()] }
 }
 
+/*
+ 응답의 summary는 건수(expenseCount, regretCount)만 주므로
+ 화면에 쓰는 합계와 평균은 받아 온 기록으로 여기서 더한다.
+ 하루 평균 = 총 소비 ÷ 경과 일수. 이번 달이면 오늘까지, 지난달이면 그 달 전체 일수를 쓴다.
+*/
+function toSummary(expenses, year, month) {
+  if (!expenses.length) return null
+  const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const isCurrent = year === TODAY.getFullYear() && month === TODAY.getMonth() + 1
+  const elapsedDays = isCurrent ? TODAY.getDate() : new Date(year, month, 0).getDate()
+  return {
+    totalAmount,
+    dailyAverage: Math.round(totalAmount / elapsedDays),
+    weeklyAverage: Math.round((totalAmount / elapsedDays) * 7),
+  }
+}
+
 export default function Records() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [view, setView] = useState({ year: MOCK_TODAY.getFullYear(), month: MOCK_TODAY.getMonth() + 1 })
-  const [data, setData] = useState(() => fetchMockRecords(view.year, view.month))
+  const [view, setView] = useState({ year: TODAY.getFullYear(), month: TODAY.getMonth() + 1 })
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const isCurrentMonth = view.year === MOCK_TODAY.getFullYear() && view.month === MOCK_TODAY.getMonth() + 1
+  const [deleting, setDeleting] = useState(false)
+  const isCurrentMonth = view.year === TODAY.getFullYear() && view.month === TODAY.getMonth() + 1
+
+  const load = useCallback(() => getExpenses({ month: `${view.year}-${pad(view.month)}` }), [view])
+  const { data, error, loading, reload } = useApiData(load)
 
   const moveMonth = (delta) => {
     const next = new Date(view.year, view.month - 1 + delta, 1)
-    const nextView = { year: next.getFullYear(), month: next.getMonth() + 1 }
-    setView(nextView)
-    setData(fetchMockRecords(nextView.year, nextView.month))
+    setView({ year: next.getFullYear(), month: next.getMonth() + 1 })
   }
 
-  const { summary, expenses } = data
+  const expenses = data?.expenses ?? []
+  const summary = toSummary(expenses, view.year, view.month)
 
   // 날짜별로 묶기. 날짜 옆 그날 합계는 응답에 없어서 여기서 더한다
   // 같은 날이 떨어져 오면 묶음이 쪼개져서, 묶기 전에 최신순으로 한 번 정렬한다
@@ -46,11 +69,19 @@ export default function Records() {
   })
   const dayTotal = (items) => items.reduce((sum, e) => sum + e.amount, 0)
 
-  const confirmDelete = () => {
-    // 실제 API에서는 DELETE 후 목록을 다시 불러온다. 지금은 목록에서만 뺀다
-    setData({ ...data, expenses: expenses.filter((e) => e.expenseId !== deleteTarget.expenseId) })
-    setDeleteTarget(null)
-    showToast('기록을 삭제했어요')
+  const confirmDelete = async () => {
+    setDeleting(true)
+    try {
+      await deleteExpense(deleteTarget.expenseId)
+      setDeleteTarget(null)
+      showToast('기록을 삭제했어요')
+      reload()
+    } catch (err) {
+      // 서버가 주는 문구를 그대로 보여 준다
+      showToast(err.message)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const target = deleteTarget && parseDate(deleteTarget.spentAt)
@@ -67,7 +98,16 @@ export default function Records() {
         />
       </div>
 
-      {groups.length === 0 ? (
+      {loading ? (
+        <p className="records-state">기록을 불러오고 있어요</p>
+      ) : error ? (
+        <div className="records-state">
+          <p className="records-state-message">{error.message}</p>
+          <Button variant="light" size="medium" onClick={reload}>
+            다시 시도
+          </Button>
+        </div>
+      ) : groups.length === 0 ? (
         <div className="records-empty">
           <img className="records-empty-illustration" src={coachCharacter} alt="" />
           <p className="records-empty-message">
@@ -131,10 +171,12 @@ export default function Records() {
               {target.day}일
             </p>
             <div className="records-sheet-actions">
-              <Button variant="light" onClick={() => setDeleteTarget(null)}>
+              <Button variant="light" onClick={() => setDeleteTarget(null)} disabled={deleting}>
                 취소
               </Button>
-              <Button onClick={confirmDelete}>삭제할게요</Button>
+              <Button onClick={confirmDelete} disabled={deleting}>
+                삭제할게요
+              </Button>
             </div>
           </>
         )}

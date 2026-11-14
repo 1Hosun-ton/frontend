@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomSheet from '../../components/BottomSheet/BottomSheet.jsx'
 import Button from '../../components/Button/Button.jsx'
@@ -9,20 +9,19 @@ import Tag from '../../components/Tag/Tag.jsx'
 import chevronRightSmall from '../../assets/icons/chevron-right-small.svg'
 import missionAchieved from '../../assets/icons/mission-achieved.svg'
 import missionDayDone from '../../assets/icons/mission-day-done.svg'
+import { useToast } from '../../components/Toast/useToast.js'
 import {
-  ACHIEVE_DAYS,
-  DIFFICULTY_REASONS,
-  fetchMockMission,
-  levelLabel,
-  MISSION_DAYS,
-  MOCK_TODAY,
-  patternLabel,
-} from './missionsMock.js'
+  checkMissionToday,
+  getMissionsOverview,
+  setMissionDifficulty,
+  startMission as startMissionApi,
+} from '../../api/dolabom.js'
+import { useApiData } from '../../api/useApiData.js'
+import { ACHIEVE_DAYS, DIFFICULTY_REASONS, levelLabel, MISSION_DAYS, patternLabel } from './missionsMock.js'
 import './Missions.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
-const pad = (n) => String(n).padStart(2, '0')
-const toDateString = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+const TODAY = new Date()
 
 function parseDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number)
@@ -39,60 +38,79 @@ function regretChangeText(change) {
 
 export default function Missions() {
   const navigate = useNavigate()
-  const [data, setData] = useState(fetchMockMission)
+  const showToast = useToast()
+  const { data, error, loading, reload } = useApiData(getMissionsOverview)
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [reasonCode, setReasonCode] = useState(null)
-  const [sheetOpen, setSheetOpen] = useState(Boolean(data.mission?.feedbackRequired))
+  // 체크를 누를 때 함께 보내는 메모. 아직 보내지 않은 초고라서 화면에만 둔다
+  const [memo, setMemo] = useState('')
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
 
-  const { cumulativeExpenseCount, requiredExpenseCount, report, recommendations, mission } = data
+  // 지난 미션 사유를 아직 안 남겼으면(feedbackRequired) 시트를 띄운다
+  const feedbackRequired = Boolean(data?.mission?.feedbackRequired)
+  useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
+    setSheetOpen(feedbackRequired)
+  }, [feedbackRequired])
+
+  if (loading || error) {
+    return (
+      <div className="missions-page">
+        <PageHeader title="미션" />
+        <div className="missions-state">
+          <p className="missions-state-message">{error ? error.message : '미션을 불러오고 있어요'}</p>
+          {error && (
+            <Button variant="light" size="medium" onClick={reload}>
+              다시 시도
+            </Button>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  const { cumulativeExpenseCount, requiredExpenseCount, report, recommendationSetId, recommendations, mission } = data
 
   const tooFew = cumulativeExpenseCount < requiredExpenseCount
   const status = tooFew ? 'TOO_FEW' : (mission?.status ?? 'RECOMMENDED')
 
   const startedOn = mission ? parseDate(mission.startedOn) : null
   const totalDays = mission ? diffDays(startedOn.date, parseDate(mission.endsOn).date) + 1 : MISSION_DAYS
-  const todayNumber = mission ? diffDays(startedOn.date, MOCK_TODAY) + 1 : 0
+  const todayNumber = mission ? diffDays(startedOn.date, TODAY) + 1 : 0
 
-  // 미션을 시작하면 오늘부터 7일이 된다. 실제로는 POST /missions 응답으로 받는다
-  const startMission = () => {
-    const picked = recommendations.find((item) => item.optionIndex === selectedIndex)
-    const endsOn = new Date(MOCK_TODAY.getTime() + (MISSION_DAYS - 1) * DAY_MS)
-    setData({
-      ...data,
-      mission: {
-        missionId: null,
-        text: picked.text,
-        patternGroup: picked.patternGroup,
-        level: picked.level,
-        startedOn: toDateString(MOCK_TODAY),
-        endsOn: toDateString(endsOn),
-        doneDays: 0,
-        checkedToday: false,
-        status: 'IN_PROGRESS',
-        feedbackRequired: false,
-        difficulty: null,
-        memo: '',
-      },
+  // 서버에 보내고, 끝나면 미션 탭을 다시 불러온다. 실패하면 서버 문구를 토스트로 보여 준다
+  const run = async (task) => {
+    setBusy(true)
+    try {
+      await task()
+      reload()
+    } catch (err) {
+      showToast(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const startMission = () =>
+    run(async () => {
+      await startMissionApi({ recommendationSetId, optionIndex: selectedIndex })
+      setSelectedIndex(null)
     })
-  }
 
-  const checkToday = () => {
-    const doneDays = mission.doneDays + 1
-    setData({
-      ...data,
-      report: { ...report, missionCompletionRate: doneDays / totalDays },
-      mission: { ...mission, doneDays, checkedToday: true },
+  const checkToday = () =>
+    run(async () => {
+      await checkMissionToday(mission.missionId, memo || undefined)
+      setMemo('')
     })
-  }
 
-  const writeMemo = (value) => setData({ ...data, mission: { ...mission, memo: value } })
-
-  const goToNextMission = () => {
-    setSelectedIndex(null)
-    setReasonCode(null)
-    setSheetOpen(false)
-    setData({ ...data, mission: null })
-  }
+  // 달성 카드에서는 사유 없이, 시트에서는 고른 사유와 함께 다음 미션으로 넘어간다
+  const goToNextMission = () =>
+    run(async () => {
+      if (reasonCode) await setMissionDifficulty(mission.missionId, reasonCode)
+      setReasonCode(null)
+      setSheetOpen(false)
+    })
 
   const footnote = <p className="missions-footnote">못 지켜도 괜찮아요. 결과를 바탕으로 다음 미션을 추천해 드려요.</p>
 
@@ -100,8 +118,9 @@ export default function Missions() {
     <div className="missions-page">
       <PageHeader title="미션" />
 
-      {status === 'TOO_FEW' ? (
-        <div className="missions-report">
+      {report &&
+        (status === 'TOO_FEW' ? (
+          <div className="missions-report">
           <p className="missions-report-label">이번 주 리포트</p>
           <p className="missions-report-headline">{report.highlight}</p>
           <p className="missions-report-sub missions-report-count">누적 기록 {cumulativeExpenseCount}건</p>
@@ -119,7 +138,7 @@ export default function Missions() {
             미션 실천율 {Math.round(report.missionCompletionRate * 100)}%
           </span>
         </button>
-      )}
+        ))}
 
       {status === 'RECOMMENDED' && (
         <section className="missions-section">
@@ -150,7 +169,7 @@ export default function Missions() {
               )
             })}
           </ul>
-          <Button fullWidth className="missions-start" disabled={selectedIndex === null} onClick={startMission}>
+          <Button fullWidth className="missions-start" disabled={selectedIndex === null || busy} onClick={startMission}>
             미션 시작하기
           </Button>
         </section>
@@ -188,7 +207,7 @@ export default function Missions() {
               size="medium"
               fullWidth
               className="missions-check"
-              disabled={mission.checkedToday}
+              disabled={mission.checkedToday || busy}
               onClick={checkToday}
             >
               {mission.checkedToday ? '오늘 실천 완료' : '오늘 실천 체크'}
@@ -203,8 +222,8 @@ export default function Missions() {
               <textarea
                 className="missions-memo"
                 placeholder="한 줄 경험 메모 (선택)"
-                value={mission.memo ?? ''}
-                onChange={(e) => writeMemo(e.target.value)}
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
               />
             )}
           </Card>
@@ -220,7 +239,7 @@ export default function Missions() {
           </p>
           <p className="missions-result-name">{mission.text}</p>
           <p className="missions-result-next">다음에는 한 단계 더 해 볼 미션을 추천해 드려요</p>
-          <Button size="medium" fullWidth onClick={goToNextMission}>
+          <Button size="medium" fullWidth disabled={busy} onClick={goToNextMission}>
             다음 미션 보기
           </Button>
         </Card>
@@ -284,7 +303,7 @@ export default function Missions() {
                 )
               })}
             </ul>
-            <Button fullWidth className="missions-sheet-button" disabled={!reasonCode} onClick={goToNextMission}>
+            <Button fullWidth className="missions-sheet-button" disabled={!reasonCode || busy} onClick={goToNextMission}>
               선택하고 다음 미션 보기
             </Button>
           </>
