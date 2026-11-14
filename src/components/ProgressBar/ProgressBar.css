@@ -8,6 +8,7 @@
 .progress-bar-fill {
   height: 100%;
   border-radius: var(--radius-bar);
+  transition: width var(--motion-fill) var(--ease-out);
 }
 
 .progress-bar-fill-primary {
@@ -18,7 +19,6 @@
   background: var(--color-danger);
 }
 
-/* 단계: 같은 길이 칸 여러 개, 칸 사이 6px, 높이 8px */
 .progress-steps {
   display: flex;
   gap: 0.38rem;
@@ -29,6 +29,7 @@
   height: 0.5rem;
   border-radius: 0.25rem;
   background: var(--color-grey-200);
+  transition: background-color var(--motion-fill) var(--ease-out);
 }
 
 .progress-step-primary {

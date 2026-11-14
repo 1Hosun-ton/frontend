@@ -1,7 +1,12 @@
-const ACCESS_KEY = 'dolabom-access-token'
-const REFRESH_KEY = 'dolabom-refresh-token'
+/*
+ 로그인 토큰을 한 곳에서만 다룬다.
+ 브라우저를 닫아도 로그인이 남아 있어야 해서 localStorage에 둔다.
+ 사생활 보호 모드처럼 저장이 막힌 곳에서도 화면이 죽지 않도록 전부 try로 감싼다.
+*/
+const ACCESS_KEY = 'dolabom.accessToken'
+const REFRESH_KEY = 'dolabom.refreshToken'
 
-function read(key) {
+const read = (key) => {
   try {
     return localStorage.getItem(key)
   } catch {
@@ -9,28 +14,24 @@ function read(key) {
   }
 }
 
-export function getAccessToken() {
-  return read(ACCESS_KEY)
+const write = (key, value) => {
+  try {
+    if (value === null) localStorage.removeItem(key)
+    else localStorage.setItem(key, value)
+  } catch {
+    // 저장이 막혀 있으면 이번 화면에서만 로그인이 유지된다
+  }
 }
 
-export function getRefreshToken() {
-  return read(REFRESH_KEY)
-}
+export const getAccessToken = () => read(ACCESS_KEY)
+export const getRefreshToken = () => read(REFRESH_KEY)
 
 export function setTokens({ accessToken, refreshToken }) {
-  try {
-    localStorage.setItem(ACCESS_KEY, accessToken)
-    localStorage.setItem(REFRESH_KEY, refreshToken)
-  } catch {
-    // 저장소를 못 쓰면 이번 접속 동안만 로그인 상태가 유지되지 않는다
-  }
+  write(ACCESS_KEY, accessToken ?? null)
+  write(REFRESH_KEY, refreshToken ?? null)
 }
 
 export function clearTokens() {
-  try {
-    localStorage.removeItem(ACCESS_KEY)
-    localStorage.removeItem(REFRESH_KEY)
-  } catch {
-    // 무시
-  }
+  write(ACCESS_KEY, null)
+  write(REFRESH_KEY, null)
 }

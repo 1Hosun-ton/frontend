@@ -1,5 +1,5 @@
 .chip {
-  height: 2.13rem; /* 34px */
+  height: 2.13rem;
   padding: 0 0.88rem;
   border: 1px solid var(--color-grey-300);
   border-radius: var(--radius-pill);
@@ -14,12 +14,12 @@
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-white);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
 }
 
 .chip-selected-danger {
   border-color: var(--color-danger);
   background: var(--color-danger);
   color: var(--color-white);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
 }

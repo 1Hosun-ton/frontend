@@ -4,6 +4,13 @@
   display: flex;
   align-items: flex-end;
   background: var(--color-dim);
+  animation: bottom-sheet-dim-in var(--motion-sheet-in) var(--ease-out);
+}
+
+/* 내려가는 중에는 눌러도 반응하지 않게 한다 */
+.bottom-sheet-dim-closing {
+  animation: bottom-sheet-dim-out var(--motion-sheet-out) var(--ease-out) forwards;
+  pointer-events: none;
 }
 
 .bottom-sheet {
@@ -14,6 +21,35 @@
   padding: 2.25rem var(--space-page) 2rem;
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: var(--color-white);
+  animation: bottom-sheet-in var(--motion-sheet-in) var(--ease-out);
+}
+
+.bottom-sheet-closing {
+  animation: bottom-sheet-out var(--motion-sheet-out) var(--ease-out) forwards;
+}
+
+@keyframes bottom-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes bottom-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes bottom-sheet-dim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes bottom-sheet-dim-out {
+  to {
+    opacity: 0;
+  }
 }
 
 .bottom-sheet-handle {

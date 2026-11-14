@@ -1,0 +1,411 @@
+.insights-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 주간 / 월간 전환 */
+.insights-tabs {
+  display: flex;
+  margin-top: 1rem;
+  padding: 0.25rem;
+  border-radius: 0.63rem;
+  background: var(--color-grey-200);
+}
+
+.insights-tab {
+  flex: 1;
+  height: 2rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  font-size: var(--font-body);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+  cursor: pointer;
+}
+
+.insights-tab-active {
+  background: var(--color-white);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.insights-period {
+  margin-top: 0.75rem;
+}
+
+/* 기록 5건 미만 */
+.insights-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3.5rem;
+  text-align: center;
+}
+
+.insights-empty-character {
+  width: 5.13rem;
+  height: 6rem;
+  margin-bottom: 1rem;
+  object-fit: contain;
+}
+
+.insights-empty-message {
+  margin: 0;
+  font-size: var(--font-section);
+  line-height: 1.59rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.insights-empty-count {
+  margin: 0.75rem 0 0.5rem;
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.insights-empty-progress {
+  width: 12.5rem;
+}
+
+.insights-empty-button {
+  width: 11.25rem;
+  margin-top: 1.5rem;
+  font-size: var(--font-button);
+}
+
+/* 카드 */
+.insights-card {
+  margin-top: 0.75rem;
+}
+
+.insights-card-title {
+  margin: 0;
+  font-size: var(--font-button);
+  line-height: 1.38rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+/* 핵심 인사이트 */
+.insights-key-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.insights-key-label {
+  margin: 0;
+  font-size: 0.81rem;
+  line-height: 1.25rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.insights-evidence-button {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  color: var(--color-text-sub);
+  cursor: pointer;
+}
+
+.insights-evidence-button img {
+  width: 1.13rem;
+  height: 1.13rem;
+}
+
+.insights-key-text {
+  margin: 0.25rem 0 0;
+  font-size: var(--font-section);
+  line-height: 1.59rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.insights-key-text-single {
+  line-height: 1.63rem;
+}
+
+.insights-key-evidence {
+  margin: 0.5rem 0 0;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  color: var(--color-text-muted);
+}
+
+/* 추이 그래프 */
+.trend-chart {
+  position: relative;
+  margin-top: 1.5rem;
+}
+
+.trend-legend {
+  position: absolute;
+  top: -0.31rem;
+  left: 0;
+  display: flex;
+  gap: 0.88rem;
+}
+
+.trend-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--font-caption);
+  line-height: 1.13rem;
+  color: var(--color-text-sub);
+}
+
+.trend-legend-current {
+  color: var(--color-ink);
+}
+
+.trend-legend-line {
+  width: 0.75rem;
+  height: 0.19rem;
+  border-radius: 0.06rem;
+  background: var(--color-primary);
+}
+
+.trend-legend-line-previous {
+  background: var(--color-icon-inactive);
+}
+
+.trend-svg {
+  display: block;
+  overflow: visible;
+}
+
+/* 처음 그려질 때만 왼쪽에서 오른쪽으로 선이 이어진다 */
+.trend-line {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: trend-line-draw var(--motion-chart) var(--ease-out);
+}
+
+@keyframes trend-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.trend-line-previous {
+  stroke: var(--color-icon-inactive);
+  stroke-width: 2;
+}
+
+.trend-line-current {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+}
+
+.trend-dot {
+  fill: var(--color-primary);
+  animation: trend-dot-in var(--motion-chart) var(--ease-out);
+}
+
+@keyframes trend-dot-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.trend-labels {
+  position: relative;
+  height: 1.03rem;
+  margin-top: 0.25rem;
+}
+
+.trend-label {
+  position: absolute;
+  top: 0;
+  width: 2.5rem;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: var(--font-caption);
+  line-height: 1.03rem;
+  color: var(--color-text-sub);
+}
+
+.trend-label-active {
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+/* 이유별 비중 */
+.insights-reasons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.reason-donut {
+  flex: none;
+}
+
+/* 처음 그려질 때만 조각이 각자 시작점에서 자란다 */
+.reason-donut-arc {
+  animation: reason-donut-draw var(--motion-chart) var(--ease-out);
+}
+
+@keyframes reason-donut-draw {
+  from {
+    stroke-dasharray: 0 var(--donut-circumference);
+  }
+}
+
+.insights-legend {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.insights-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.22rem;
+  font-size: var(--font-small);
+  color: var(--color-ink);
+}
+
+.insights-legend-row + .insights-legend-row {
+  margin-top: 0.08rem;
+}
+
+.insights-legend-dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.insights-legend-name {
+  flex: 1;
+}
+
+.insights-legend-percent {
+  font-weight: var(--weight-bold);
+}
+
+.insights-note {
+  margin: 0;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  color: var(--color-text-muted);
+}
+
+.insights-reasons + .insights-note {
+  margin-top: 0.5rem;
+}
+
+/* 지금은 이런 게 필요해요 */
+.insights-suggestion {
+  margin: 0.38rem 0 0.75rem;
+  font-size: var(--font-button);
+  line-height: 1.41rem;
+  color: var(--color-ink);
+}
+
+/* 분석 중 */
+.insights-skeleton {
+  border-radius: 0.5rem;
+  background: var(--color-grey-200);
+}
+
+.insights-skeleton-label {
+  width: 7.5rem;
+  height: 0.88rem;
+  border-radius: 0.44rem;
+}
+
+.insights-skeleton-line {
+  width: 100%;
+  height: 1.13rem;
+  margin-top: 0.88rem;
+  border-radius: 0.56rem;
+}
+
+.insights-skeleton-line-short {
+  width: 73%;
+  margin-top: 0.63rem;
+}
+
+.insights-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0 1rem;
+}
+
+.insights-loading-spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  animation: insights-spin 1s linear infinite;
+}
+
+.insights-loading-text {
+  margin: 0.5rem 0 0;
+  font-size: var(--font-body);
+  line-height: 1.31rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.insights-skeleton-title {
+  width: 5.63rem;
+  height: 1rem;
+}
+
+.insights-skeleton-donut {
+  flex: none;
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 3.25rem;
+}
+
+.insights-skeleton-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.insights-skeleton-legend-row {
+  height: 0.75rem;
+  border-radius: 0.38rem;
+}
+
+@keyframes insights-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 근거 기록 시트 */
+.insights-sheet-subtitle {
+  margin: 0;
+  font-size: var(--font-small);
+  line-height: 1.25rem;
+  color: var(--color-text-sub);
+}
+
+.insights-evidence-list {
+  margin: 0.75rem 0 0.5rem;
+  padding: 0;
+}
+
+.insights-sheet-close {
+  font-size: var(--font-sheet-title);
+}

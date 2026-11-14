@@ -15,9 +15,17 @@
   --color-toast: #333d4b; /* 토스트 배경 */
   --color-dim: rgba(0, 0, 0, 0.45); /* 바텀시트 뒤 어두운 막 */
   --color-white: #fff;
+  /* 인사이트 도넛·범례 색 (순서대로) */
+  --color-chart-1: #3182f6;
+  --color-chart-2: #ffc342;
+  --color-chart-3: #03b26c;
+  --color-chart-4: #18a5a5;
+  --color-chart-5: #a234c7;
+  --color-chart-rest: #d1d6db; /* 색을 다 쓴 뒤 남는 조각 */
 
   /* 글자 */
   --font-sans: 'Pretendard', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --font-emoji: 'Tossface', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   --font-caption: 0.69rem; /* 하단 탭 글자 */
   --font-xsmall: 0.75rem; /* 태그 글자 */
   --font-small: 0.81rem; /* 보조 글자 */
@@ -43,9 +51,18 @@
   --radius-button: 0.63rem; /* 작은 버튼 */
   --radius-button-md: 0.88rem; /* 중간 버튼 */
   --radius-pill: 1.63rem;
-  --radius-sheet: 1.25rem; /* 바텀시트 위쪽 모서리 */
+  --radius-sheet: 1rem; /* 바텀시트 위쪽 모서리 */
   --radius-toast: 0.75rem;
   --radius-bar: 0.31rem;
+
+  /* 움직임 */
+  --motion-press: 100ms; /* 버튼 누를 때 */
+  --motion-sheet-in: 250ms;
+  --motion-sheet-out: 200ms;
+  --motion-toast: 200ms; /* 토스트 올라오고 사라지는 시간 */
+  --motion-fill: 300ms; /* 진행바·체크 채워지는 시간 */
+  --motion-chart: 600ms; /* 그래프 첫 등장 */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   /* 레이아웃 */
   --app-width: 390px;

@@ -1,0 +1,74 @@
+.record-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  list-style: none;
+}
+
+.record-item-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-top: 0.25rem;
+  border-radius: 1.25rem;
+  background: var(--color-grey-100);
+  font-family: var(--font-emoji);
+  font-size: 1.38rem;
+  line-height: 1;
+}
+
+.record-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.record-item-category {
+  margin: 0;
+  font-size: var(--font-button);
+  line-height: 1.41rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+}
+
+.record-item-memo {
+  margin: 0;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+}
+
+.record-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+  margin-top: 0.25rem;
+}
+
+.record-item-side {
+  flex: none;
+  text-align: right;
+}
+
+.record-item-amount {
+  margin: 0;
+  font-size: var(--font-button);
+  line-height: 1.41rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+
+.record-item-delete {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--font-xsmall);
+  line-height: 1.13rem;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-sub);
+  cursor: pointer;
+}

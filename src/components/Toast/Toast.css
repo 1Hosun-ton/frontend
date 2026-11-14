@@ -12,4 +12,23 @@
   color: var(--color-white);
   font-size: var(--font-body);
   font-weight: var(--weight-medium);
+  animation: toast-in var(--motion-toast) var(--ease-out);
+}
+
+.toast-leaving {
+  animation: toast-out var(--motion-toast) var(--ease-out) forwards;
+}
+
+/* 8px 아래에서 올라온다 */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+  }
 }

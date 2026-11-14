@@ -6,6 +6,11 @@
   border: 0;
   font-weight: var(--weight-semibold);
   cursor: pointer;
+  transition: transform var(--motion-press) var(--ease-out);
+}
+
+.button:not(:disabled):active {
+  transform: scale(0.97);
 }
 
 .button:disabled {
