@@ -10,7 +10,7 @@ import { useToast } from '../../components/Toast/useToast.js'
 import coachCharacter from '../../assets/icons/coach-character.png'
 import { deleteExpense, getExpenses } from '../../api/dolabom.js'
 import { useApiData } from '../../api/useApiData.js'
-import { itemLabel } from './recordCategories.js'
+import { itemLabel } from '../../constants/expense.js'
 import './Records.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']

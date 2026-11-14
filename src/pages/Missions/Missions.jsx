@@ -17,11 +17,17 @@ import {
   startMission as startMissionApi,
 } from '../../api/dolabom.js'
 import { useApiData } from '../../api/useApiData.js'
-import { ACHIEVE_DAYS, DIFFICULTY_REASONS, levelLabel, MISSION_DAYS, patternLabel } from './missionsMock.js'
+import { fromDateString, todayString } from '../../utils/date.js'
+import { ACHIEVE_DAYS, DIFFICULTY_REASONS, levelLabel, MISSION_DAYS, patternLabel } from './missionConstants.js'
 import './Missions.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
-const TODAY = new Date()
+
+/*
+ 날짜만 센다. new Date()를 그대로 쓰면 지금 시각이 섞여서,
+ 낮 12시를 넘긴 뒤에는 하루 치가 반올림되어 '오늘 2일째'로 밀린다.
+*/
+const TODAY = fromDateString(todayString())
 
 function parseDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number)
@@ -135,7 +141,8 @@ export default function Missions() {
           <span className="missions-report-sub">
             후회 소비 {report.regretCount}건 · {regretChangeText(report.regretCountChange)}
             <span className="missions-report-divider">|</span>
-            미션 실천율 {Math.round(report.missionCompletionRate * 100)}%
+            {/* 서버가 퍼센트 값으로 준다 (예: 14.29 = 14%) */}
+            미션 실천율 {Math.round(report.missionCompletionRate)}%
           </span>
         </button>
         ))}

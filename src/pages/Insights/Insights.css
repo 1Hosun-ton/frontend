@@ -79,7 +79,7 @@
 
 /* 카드 */
 .insights-card {
-  margin-top: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .insights-card-title {
@@ -143,16 +143,17 @@
 
 /* 추이 그래프 */
 .trend-chart {
-  position: relative;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
 }
 
+/*
+ 범례는 그래프 위에 따로 놓는다.
+ 겹쳐 두면 최대치에 가까운 선이 글자에 닿는다. 최대치는 그래프 위에서 0.5rem 자리에 그려진다.
+*/
 .trend-legend {
-  position: absolute;
-  top: -0.31rem;
-  left: 0;
   display: flex;
   gap: 0.88rem;
+  margin-bottom: 0.5rem;
 }
 
 .trend-legend-item {

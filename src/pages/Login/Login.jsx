@@ -3,14 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button.jsx'
 import TextField from '../../components/TextField/TextField.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { login } from '../../api/index.js'
+import { login } from '../../api/dolabom.js'
 import logo from '../../assets/logo.svg'
 import './Login.css'
 
 const LOGIN_FAILED = '이메일 또는 비밀번호를 다시 확인해 주세요'
 const TOAST_BOTTOM = '2.31rem'
 
-// S0 로그인 화면
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()

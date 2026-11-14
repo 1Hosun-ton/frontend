@@ -13,7 +13,6 @@ import More from './pages/More/More.jsx'
 import RecordNew from './pages/RecordNew/RecordNew.jsx'
 import AppInfo from './pages/AppInfo/AppInfo.jsx'
 import { ToastProvider } from './components/Toast/Toast.jsx'
-import ComponentPreview from './pages/ComponentPreview.jsx'
 
 function App() {
   return (
@@ -26,8 +25,6 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/missions" element={<Missions />} />
-              {/* 컴포넌트 미리보기용 페이지 */}
-              <Route path="/preview" element={<ComponentPreview />} />
             </Route>
             <Route element={<TabLayout bg="white" />}>
               <Route path="/records" element={<Records />} />

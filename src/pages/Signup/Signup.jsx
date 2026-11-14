@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button.jsx'
 import TextField from '../../components/TextField/TextField.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { signup } from '../../api/index.js'
+import { signup } from '../../api/dolabom.js'
 import backIcon from '../../assets/icons/back.svg'
 import checkIcon from '../../assets/icons/check-circle.svg'
 import checkIconActive from '../../assets/icons/check-circle-active.svg'
@@ -27,7 +27,6 @@ function validate({ nickname, email, password, passwordConfirm, agreed }) {
   return null
 }
 
-// S1 회원가입 화면
 export default function Signup() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -58,7 +57,6 @@ export default function Signup() {
 
     setSubmitting(true)
     try {
-      // 약관 동의 값은 서버로 보내지 않는다
       await signup({ nickname, email, password })
       navigate('/budget', { replace: true })
     } catch (error) {

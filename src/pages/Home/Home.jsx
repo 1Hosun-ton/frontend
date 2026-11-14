@@ -6,12 +6,11 @@ import PageHeader from '../../components/PageHeader/PageHeader.jsx'
 import ProgressBar from '../../components/ProgressBar/ProgressBar.jsx'
 import Tag from '../../components/Tag/Tag.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { checkMission, getHome } from '../../api/index.js'
+import { checkMissionToday, getHome } from '../../api/dolabom.js'
 import { weekLabel } from '../../utils/date.js'
 import { formatNumber, formatWon } from '../../utils/format.js'
 import './Home.css'
 
-// S3 홈 화면
 export default function Home() {
   const navigate = useNavigate()
   const showToast = useToast()
@@ -41,7 +40,7 @@ export default function Home() {
     if (checking || !home.mission) return
     setChecking(true)
     try {
-      const { doneDays, checkedToday } = await checkMission(home.mission.missionId)
+      const { doneDays, checkedToday } = await checkMissionToday(home.mission.missionId)
       setHome((prev) => ({ ...prev, mission: { ...prev.mission, doneDays, checkedToday } }))
     } catch (error) {
       showToast(error.message)

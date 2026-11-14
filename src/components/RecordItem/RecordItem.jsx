@@ -1,5 +1,5 @@
 import Tag from '../Tag/Tag.jsx'
-import { itemEmoji, itemLabel, moodLabel, reasonLabel } from '../../pages/Records/recordCategories.js'
+import { itemEmoji, itemLabel, moodLabel, reasonLabel } from '../../constants/expense.js'
 import './RecordItem.css'
 
 /*

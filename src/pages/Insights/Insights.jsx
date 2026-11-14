@@ -10,7 +10,8 @@ import RecordItem from '../../components/RecordItem/RecordItem.jsx'
 import chevronRightSmall from '../../assets/icons/chevron-right-small.svg'
 import coachCharacter from '../../assets/icons/coach-character.png'
 import spinner from '../../assets/icons/spinner.svg'
-import { itemLabel, reasonLabel } from '../Records/recordCategories.js'
+import { itemLabel, reasonLabel } from '../../constants/expense.js'
+import { startOfWeek, toDateString, todayString } from '../../utils/date.js'
 import { getExpenses, getInsights, INSIGHT_STATUS as STATUS } from '../../api/dolabom.js'
 import { useApiData } from '../../api/useApiData.js'
 import ReasonDonut from './ReasonDonut.jsx'
@@ -28,33 +29,54 @@ const pad = (n) => String(n).padStart(2, '0')
 
 /*
  서버에는 기간 시작 날짜로 물어본다.
- 월간은 그 달 1일, 주간은 이 화면이 쓰는 '몇째 주' 셈법대로 (주차-1)*7+1 일이다.
+ 스웨거: "주간은 월요일, 월간은 1일이어야 하며 미래 기간은 조회할 수 없습니다."
+ 그래서 주간은 주차 번호로 셈하지 않고 그 주 월요일 날짜를 그대로 들고 다닌다.
  돌려받은 period.startDate/endDate가 실제 기준이므로 그래프와 목록은 그 값을 쓴다.
 */
-const toPeriodStart = (period, { year, month, week }) =>
-  period === 'week' ? `${year}-${pad(month)}-${pad((week - 1) * 7 + 1)}` : `${year}-${pad(month)}-01`
+const addDays = (date, days) => {
+  const moved = new Date(date)
+  moved.setDate(moved.getDate() + days)
+  return moved
+}
 
-const weeksInMonth = (year, month) => Math.ceil(new Date(year, month, 0).getDate() / 7)
+// 화면에 쓰는 '몇째 주'. 그 달의 몇 번째 월요일인지로 센다
+const weekOfMonth = (monday) => Math.ceil(monday.getDate() / 7)
+
+const THIS_MONDAY = startOfWeek(TODAY)
 
 const parseDate = (text) => {
   const [y, m, d] = text.split('-').map(Number)
   return { date: new Date(y, m - 1, d), month: m, day: d }
 }
 
-// 아래 칸 이름. 주간은 요일, 월간은 날짜가 속한 주차
-const toLabel = (text, isWeekly) => {
-  const { date, day } = parseDate(text)
-  return isWeekly ? WEEKDAYS[date.getDay()] : `${Math.ceil(day / 7)}주`
-}
+/*
+ 아래 칸 이름.
+ 주간은 하루에 한 점씩 오므로 요일을 쓴다.
+ 월간은 주마다 한 점씩, 그 주가 시작하는 날짜로 온다. 그래서 날짜가 아니라 온 순서대로 센다.
+ 날짜에서 ceil(일/7)로 세면 안 된다. 서버의 주는 월요일에 시작해서, 1일이 월요일이 아닌 달은
+ 1일과 첫 월요일이 둘 다 '1주'가 되어 칸 이름이 겹친다. (2026년 11월은 1일이 일요일이라 6주로 온다)
+*/
+const toLabels = (points, isWeekly) =>
+  isWeekly
+    ? points.map((point) => WEEKDAYS[parseDate(point.date).date.getDay()])
+    : points.map((_, index) => `${index + 1}주`)
 
-// trend는 지난 기간과 이번 기간이 한 배열로 온다. period.startDate를 기준으로 두 줄로 나눈다
+/*
+ trend는 지난 기간과 이번 기간이 한 배열에 담겨 온다. period.startDate를 기준으로 나눠서 두 줄로 그린다.
+ 칸 이름은 점이 더 많은 쪽을 따른다. 이번 기간은 아직 끝나지 않아 지난 기간보다 짧다.
+*/
 function toTrendChart(trend, period) {
-  const previous = trend.filter((point) => point.date < period.startDate)
-  const current = trend.filter((point) => point.date >= period.startDate)
-  const longer = previous.length >= current.length ? previous : current
   const isWeekly = period.type === 'WEEK'
+  /*
+   아직 오지 않은 주·날도 금액 0으로 함께 온다. 그대로 그리면 선이 남은 기간 동안 바닥으로 떨어진다.
+   시작 날짜가 오늘보다 뒤인 칸은 아직 오지 않은 칸이라 뺀다. 지난 기간은 전부 지나갔으므로 그대로 남는다.
+  */
+  const arrived = trend.filter((point) => point.date <= todayString())
+  const previous = arrived.filter((point) => point.date < period.startDate)
+  const current = arrived.filter((point) => point.date >= period.startDate)
+  const longer = previous.length >= current.length ? previous : current
   return {
-    labels: longer.map((point) => toLabel(point.date, isWeekly)),
+    labels: toLabels(longer, isWeekly),
     current: current.map((point) => point.amount),
     previous: previous.map((point) => point.amount),
     currentLabel: isWeekly ? '이번 주' : '이번 달',
@@ -62,65 +84,46 @@ function toTrendChart(trend, period) {
   }
 }
 
-// 소비 기록 응답을 그대로 쓰면서 메모만 "11월 18일 · 메모"로 바꾼다
 function toEvidenceRecord(expense) {
   const { month, day } = parseDate(expense.spentAt)
   return { ...expense, memo: `${month}월 ${day}일${expense.memo ? ` · ${expense.memo}` : ''}` }
 }
 
-// S6 인사이트 화면. 월간/주간 · 분석 결과 · 패턴 없음 · 기록 부족 · 분석 중 · 근거 기록 시트
 export default function Insights() {
   const navigate = useNavigate()
   const [period, setPeriod] = useState('month')
-  const [view, setView] = useState({
-    year: TODAY.getFullYear(),
-    month: TODAY.getMonth() + 1,
-    week: Math.ceil(TODAY.getDate() / 7),
-  })
+  const [view, setView] = useState({ year: TODAY.getFullYear(), month: TODAY.getMonth() + 1 })
+  // 주간은 달·주차로는 월요일을 집어낼 수 없어서 월요일 날짜 자체를 들고 있는다
+  const [weekStart, setWeekStart] = useState(THIS_MONDAY)
   const [evidenceOpen, setEvidenceOpen] = useState(false)
 
   const isWeek = period === 'week'
-  const isCurrent =
-    view.year === TODAY.getFullYear() &&
-    view.month === TODAY.getMonth() + 1 &&
-    (!isWeek || view.week === Math.ceil(TODAY.getDate() / 7))
+  // 다음으로 넘어갈 수 없는 자리(미래 기간은 서버가 막는다)
+  const isCurrent = isWeek
+    ? weekStart.getTime() === THIS_MONDAY.getTime()
+    : view.year === TODAY.getFullYear() && view.month === TODAY.getMonth() + 1
+
+  const periodStart = isWeek ? toDateString(weekStart) : `${view.year}-${pad(view.month)}-01`
 
   // 기간이 바뀌면 다시 조회한다. 응답이 오기 전까지는 분석 중 화면을 보여 준다
   const load = useCallback(
-    () => getInsights({ periodType: isWeek ? 'WEEK' : 'MONTH', periodStart: toPeriodStart(period, view) }),
-    [isWeek, period, view],
+    () => getInsights({ periodType: isWeek ? 'WEEK' : 'MONTH', periodStart }),
+    [isWeek, periodStart],
   )
   const { data, error, reload } = useApiData(load)
 
   const moveMonth = (delta) => {
     const next = new Date(view.year, view.month - 1 + delta, 1)
-    setView({ year: next.getFullYear(), month: next.getMonth() + 1, week: 1 })
+    setView({ year: next.getFullYear(), month: next.getMonth() + 1 })
   }
 
-  const moveWeek = (delta) => {
-    const week = view.week + delta
-    if (week < 1) {
-      const prev = new Date(view.year, view.month - 2, 1)
-      const year = prev.getFullYear()
-      const month = prev.getMonth() + 1
-      setView({ year, month, week: weeksInMonth(year, month) })
-    } else if (week > weeksInMonth(view.year, view.month)) {
-      const next = new Date(view.year, view.month, 1)
-      setView({ year: next.getFullYear(), month: next.getMonth() + 1, week: 1 })
-    } else {
-      setView({ ...view, week })
-    }
-  }
+  // 7일씩 움직이면 달·해 넘김은 저절로 맞는다
+  const moveWeek = (delta) => setWeekStart((prev) => addDays(prev, delta * 7))
 
   const periodName = isWeek ? '이번 주' : '이번 달'
   const keyInsight = data?.keyInsight
   const trend = data?.trend?.length ? toTrendChart(data.trend, data.period) : null
-  // 시안처럼 비중이 큰 순서로 보여 준다 (응답 순서는 섞여 올 수 있다)
   const reasons = data ? [...data.reasonBreakdown].sort((a, b) => b.ratio - a.ratio) : []
-  /*
-   근거 기록만 주는 엔드포인트가 없어서, 소비 기록을 이유와 기간으로 걸러서 쓴다.
-   시트를 열 때만 불러온다.
-  */
   const [evidence, setEvidence] = useState({ records: [], loading: false, error: null })
   useEffect(() => {
     if (!evidenceOpen || !keyInsight) return
@@ -160,7 +163,7 @@ export default function Insights() {
 
       <div className="insights-period">
         <PeriodSwitcher
-          label={isWeek ? `${view.month}월 ${view.week}주차` : `${view.month}월`}
+          label={isWeek ? `${weekStart.getMonth() + 1}월 ${weekOfMonth(weekStart)}주차` : `${view.month}월`}
           onPrev={() => (isWeek ? moveWeek(-1) : moveMonth(-1))}
           onNext={() => (isWeek ? moveWeek(1) : moveMonth(1))}
           nextDisabled={isCurrent}
@@ -223,7 +226,6 @@ export default function Insights() {
         </div>
       )}
 
-      {/* 이 기간에 기록이 없는 상태. 시안에 없어서 기록 부족 화면을 따라 만들었다 */}
       {data?.status === STATUS.noExpenses && (
         <div className="insights-empty">
           <img className="insights-empty-character" src={coachCharacter} alt="" />

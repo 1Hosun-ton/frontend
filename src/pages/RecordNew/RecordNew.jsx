@@ -5,7 +5,7 @@ import Button from '../../components/Button/Button.jsx'
 import Chip from '../../components/Chip/Chip.jsx'
 import TextField from '../../components/TextField/TextField.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { createExpense } from '../../api/index.js'
+import { createExpense } from '../../api/dolabom.js'
 import { EXPENSE_ITEMS, EXPENSE_MOODS, EXPENSE_REASONS } from '../../constants/expense.js'
 import { dateFieldLabel, todayString } from '../../utils/date.js'
 import chevronRight from '../../assets/icons/chevron-right-grey.svg'
@@ -17,7 +17,6 @@ const QUICK_AMOUNTS = [
   { label: '+1천', value: 1000 },
 ]
 
-// S4 소비 기록 입력 화면
 export default function RecordNew() {
   const navigate = useNavigate()
   const showToast = useToast()
@@ -65,8 +64,16 @@ export default function RecordNew() {
 
     setSubmitting(true)
     try {
-      await createExpense({ amount, item, spentAt, reason, regret, mood, memo })
-      // 홈 화면 플로팅 버튼 위 위치
+      // 고르지 않은 기분과 빈 메모는 서버에 null로 보낸다
+      await createExpense({
+        amount,
+        item,
+        spentAt,
+        reason,
+        regret,
+        mood: mood ?? null,
+        memo: memo.trim() || null,
+      })
       showToast('오늘의 기록 완료!', { bottom: '9.75rem' })
       navigate('/', { replace: true })
     } catch (error) {

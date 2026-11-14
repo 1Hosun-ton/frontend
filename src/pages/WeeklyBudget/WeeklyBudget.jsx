@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import AmountInput from '../../components/AmountInput/AmountInput.jsx'
 import Button from '../../components/Button/Button.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { updateWeeklyBudget } from '../../api/index.js'
+import { setWeeklyBudget } from '../../api/dolabom.js'
 import './WeeklyBudget.css'
 
-// S2 주간 예산 화면
 export default function WeeklyBudget() {
   const navigate = useNavigate()
   const showToast = useToast()
@@ -20,7 +19,7 @@ export default function WeeklyBudget() {
 
     setSubmitting(true)
     try {
-      await updateWeeklyBudget({ weeklyBudget: budget })
+      await setWeeklyBudget(budget)
       navigate('/', { replace: true })
     } catch (error) {
       if (error.code === 'UNAUTHORIZED') return navigate('/login', { replace: true })

@@ -6,13 +6,12 @@ import Button from '../../components/Button/Button.jsx'
 import Card from '../../components/Card/Card.jsx'
 import PageHeader from '../../components/PageHeader/PageHeader.jsx'
 import { useToast } from '../../components/Toast/useToast.js'
-import { deleteAccount, getMe, logout, updateWeeklyBudget } from '../../api/index.js'
+import { deleteMe, getMe, logout, setWeeklyBudget } from '../../api/dolabom.js'
 import { APP_VERSION } from '../../constants/app.js'
 import { formatWon } from '../../utils/format.js'
 import chevronRight from '../../assets/icons/chevron-right-grey.svg'
 import './More.css'
 
-// S8 더보기 화면
 export default function More() {
   const navigate = useNavigate()
   const showToast = useToast()
@@ -46,7 +45,7 @@ export default function More() {
     if (!budgetDraft) return showToast('1원 이상 입력해 주세요')
     setBusy(true)
     try {
-      const { weeklyBudget } = await updateWeeklyBudget({ weeklyBudget: budgetDraft })
+      const { weeklyBudget } = await setWeeklyBudget(budgetDraft)
       setMe((prev) => ({ ...prev, weeklyBudget }))
       closeSheet()
     } catch (error) {
@@ -70,7 +69,7 @@ export default function More() {
     if (busy) return
     setBusy(true)
     try {
-      await deleteAccount()
+      await deleteMe()
       navigate('/login', { replace: true })
     } catch (error) {
       showToast(error.message)
